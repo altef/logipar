@@ -1,0 +1,22 @@
+--class-path src
+
+--each
+
+
+LogicString 
+--js lib/LogicString.js
+
+--next 
+
+LogicString 
+--php lib/php
+
+--next 
+
+LogicString 
+--python lib/LogicString.py
+
+--next 
+
+LogicString 
+--neko lib/LogicString.n
