@@ -30,33 +30,6 @@ class GenericStack {
 	 */
 	public function __construct () {
 	}
-
-	/**
-	 * Returns a String representation of `this` GenericStack.
-	 * 
-	 * @return string
-	 */
-	public function toString () {
-		#C:\HaxeToolkit\haxe\std/haxe/ds/GenericStack.hx:185: characters 3-23
-		$a = new \Array_hx();
-		#C:\HaxeToolkit\haxe\std/haxe/ds/GenericStack.hx:186: characters 3-16
-		$l = $this->head;
-		#C:\HaxeToolkit\haxe\std/haxe/ds/GenericStack.hx:187: lines 187-190
-		while ($l !== null) {
-			#C:\HaxeToolkit\haxe\std/haxe/ds/GenericStack.hx:188: characters 4-17
-			$a->arr[$a->length] = $l->elt;
-			++$a->length;
-
-			#C:\HaxeToolkit\haxe\std/haxe/ds/GenericStack.hx:189: characters 4-14
-			$l = $l->next;
-		}
-		#C:\HaxeToolkit\haxe\std/haxe/ds/GenericStack.hx:191: characters 3-29
-		return "{" . ($a->join(",")??'null') . "}";
-	}
-
-	public function __toString() {
-		return $this->toString();
-	}
 }
 
 Boot::registerClass(GenericStack::class, 'haxe.ds.GenericStack');

@@ -37,322 +37,6 @@ class Enum:
 class Class: pass
 
 
-class Token:
-    _hx_class_name = "Token"
-    __slots__ = ("type", "literal")
-    _hx_fields = ["type", "literal"]
-    _hx_methods = ["precedence", "toString"]
-
-    def __init__(self,_hx_type,literal = None):
-        self.type = _hx_type
-        self.literal = literal
-
-    def precedence(self):
-        tmp = self.type.index
-        if ((tmp == 3) or ((tmp == 0))):
-            return 2
-        elif ((tmp == 2) or ((tmp == 1))):
-            return 1
-        else:
-            return 0
-
-    def toString(self):
-        if (self.type == Syntax.LITERAL):
-            return (("LITERAL(" + HxOverrides.stringOrNull(self.literal)) + ")")
-        return Std.string(self.type)
-
-
-
-class Node:
-    _hx_class_name = "Node"
-    __slots__ = ("token", "left", "right")
-    _hx_fields = ["token", "left", "right"]
-    _hx_methods = ["toString", "fancyString", "check"]
-
-    def __init__(self,token):
-        self.right = None
-        self.left = None
-        self.token = token
-
-    def toString(self):
-        return self.fancyString()
-
-    def fancyString(self,f = None):
-        s = None
-        if (f is not None):
-            s = f(self)
-        if (s is not None):
-            return s
-        tmp = self.token.type.index
-        if (tmp == 3):
-            return (("NOT(" + Std.string(self.right)) + ")")
-        elif (tmp == 6):
-            return (("{" + HxOverrides.stringOrNull(self.token.literal)) + "}")
-        else:
-            return (((((("(" + Std.string(self.left)) + " ") + Std.string(self.token.type)) + " ") + Std.string(self.right)) + ")")
-
-    def check(self,a,f):
-        tmp = self.token.type.index
-        if (tmp == 0):
-            if self.left.check(a,f):
-                return self.right.check(a,f)
-            else:
-                return False
-        elif (tmp == 1):
-            if (not self.left.check(a,f)):
-                return self.right.check(a,f)
-            else:
-                return True
-        elif (tmp == 2):
-            l = self.left.check(a,f)
-            r = self.right.check(a,f)
-            if (not (((not l) and r))):
-                if l:
-                    return (not r)
-                else:
-                    return False
-            else:
-                return True
-        elif (tmp == 3):
-            return (not self.right.check(a,f))
-        elif (tmp == 6):
-            return f(a,self.token.literal)
-        else:
-            raise _HxException("Unexpected token encountered.")
-
-
-class Syntax(Enum):
-    __slots__ = ()
-    _hx_class_name = "Syntax"
-    _hx_constructs = ["AND", "OR", "XOR", "NOT", "OPEN", "CLOSE", "LITERAL"]
-Syntax.AND = Syntax("AND", 0, list())
-Syntax.OR = Syntax("OR", 1, list())
-Syntax.XOR = Syntax("XOR", 2, list())
-Syntax.NOT = Syntax("NOT", 3, list())
-Syntax.OPEN = Syntax("OPEN", 4, list())
-Syntax.CLOSE = Syntax("CLOSE", 5, list())
-Syntax.LITERAL = Syntax("LITERAL", 6, list())
-
-
-class LogicString:
-    _hx_class_name = "LogicString"
-    __slots__ = ("logictree", "syntax", "quotations", "caseSensitive")
-    _hx_fields = ["logictree", "syntax", "quotations", "caseSensitive"]
-    _hx_methods = ["parse", "stringify", "filterFunction", "tree", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
-
-    def __init__(self,custom_syntax):
-        self.logictree = None
-        self.caseSensitive = True
-        self.quotations = ["\"", "'"]
-        _g = haxe_ds_EnumValueMap()
-        _g.set(Syntax.AND,"AND")
-        _g.set(Syntax.OR,"OR")
-        _g.set(Syntax.XOR,"XOR")
-        _g.set(Syntax.NOT,"NOT")
-        _g.set(Syntax.OPEN,"(")
-        _g.set(Syntax.CLOSE,")")
-        self.syntax = _g
-        key = custom_syntax.keys()
-        while key.hasNext():
-            key1 = key.next()
-            if self.syntax.exists(key1):
-                self.syntax.set(key1,custom_syntax.get(key1))
-
-    def parse(self,logic_string):
-        print(str(logic_string))
-        tokens = self.tokenize(logic_string)
-        print(str(tokens))
-        types = self.typeize(tokens)
-        print(str(types))
-        reversepolish = self.shunt(types)
-        print(str(reversepolish))
-        tree = self.tree(reversepolish)
-        self.logictree = tree
-        return tree
-
-    def stringify(self,f):
-        return self.logictree.fancyString(f)
-
-    def filterFunction(self,f):
-        enclosed = self.logictree
-        def _hx_local_0(a):
-            return enclosed.check(a,f)
-        return _hx_local_0
-
-    def tree(self,tokens):
-        stack = haxe_ds_GenericStack()
-        _g = 0
-        _g1 = len(tokens)
-        while (_g < _g1):
-            i = _g
-            _g = (_g + 1)
-            token = (tokens[i] if i >= 0 and i < len(tokens) else None)
-            n = Node(token)
-            if (token.type != Syntax.LITERAL):
-                if (stack.head is None):
-                    raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.get(token.type))) + "' is missing a value to operate on (on its right)."))
-                k = stack.head
-                tmp = None
-                if (k is None):
-                    tmp = None
-                else:
-                    stack.head = k.next
-                    tmp = k.elt
-                n.right = tmp
-                if (token.type != Syntax.NOT):
-                    if (stack.head is None):
-                        raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.get(token.type))) + "' is missing a value to operate on (on its left)."))
-                    k1 = stack.head
-                    tmp1 = None
-                    if (k1 is None):
-                        tmp1 = None
-                    else:
-                        stack.head = k1.next
-                        tmp1 = k1.elt
-                    n.left = tmp1
-            stack.head = haxe_ds_GenericCell(n,stack.head)
-        k2 = stack.head
-        parsetree = None
-        if (k2 is None):
-            parsetree = None
-        else:
-            stack.head = k2.next
-            parsetree = k2.elt
-        parsetree1 = parsetree
-        if (stack.head is not None):
-            print(str(stack))
-            raise _HxException("I expected the stack to be empty but it's not!")
-        return parsetree1
-
-    def shunt(self,tokens):
-        output = list()
-        operators = haxe_ds_GenericStack()
-        print("Reverse polish:")
-        _g = 0
-        _g1 = len(tokens)
-        while (_g < _g1):
-            i = _g
-            _g = (_g + 1)
-            print(":::")
-            print(str(output))
-            print(str(operators))
-            token = (tokens[i] if i >= 0 and i < len(tokens) else None)
-            tmp = token.type.index
-            if (tmp == 4):
-                operators.head = haxe_ds_GenericCell(token,operators.head)
-            elif (tmp == 5):
-                while True:
-                    k = operators.head
-                    op = None
-                    if (k is None):
-                        op = None
-                    else:
-                        operators.head = k.next
-                        op = k.elt
-                    op1 = op
-                    if (op1.type == Syntax.OPEN):
-                        break
-                    if (operators.head is None):
-                        raise _HxException("Mismatched parentheses.")
-                    output.append(op1)
-            elif (tmp == 6):
-                output.append(token)
-            else:
-                while (operators.head is not None):
-                    prev = (None if ((operators.head is None)) else operators.head.elt)
-                    if (prev.type == Syntax.OPEN):
-                        break
-                    if (prev.precedence() <= token.precedence()):
-                        break
-                    k1 = operators.head
-                    x = None
-                    if (k1 is None):
-                        x = None
-                    else:
-                        operators.head = k1.next
-                        x = k1.elt
-                    output.append(x)
-                operators.head = haxe_ds_GenericCell(token,operators.head)
-        while (operators.head is not None):
-            k2 = operators.head
-            o = None
-            if (k2 is None):
-                o = None
-            else:
-                operators.head = k2.next
-                o = k2.elt
-            o1 = o
-            if (o1.type == Syntax.OPEN):
-                raise _HxException("Mismatched parentheses.")
-            output.append(o1)
-        return output
-
-    def tentativelyLower(self,s):
-        if self.caseSensitive:
-            return s
-        else:
-            return Std.string(s).lower()
-
-    def tokenize(self,_hx_str):
-        tokens = []
-        _g = []
-        x = self.syntax.iterator()
-        while x.hasNext():
-            x1 = x.next()
-            x2 = self.tentativelyLower(x1)
-            _g.append(x2)
-        keys = _g
-        quotation = None
-        current = ""
-        _g1 = 0
-        _g2 = len(_hx_str)
-        while (_g1 < _g2):
-            i = _g1
-            _g1 = (_g1 + 1)
-            c = ("" if (((i < 0) or ((i >= len(_hx_str))))) else _hx_str[i])
-            if (python_internal_ArrayImpl.indexOf(keys,self.tentativelyLower(c),None) == -1):
-                if (python_internal_ArrayImpl.indexOf(self.quotations,c,None) != -1):
-                    if (quotation is None):
-                        quotation = c
-                    elif (quotation == c):
-                        quotation = None
-                if (StringTools.isSpace(c,0) and ((quotation is None))):
-                    if (len(current) > 0):
-                        tokens.append(current)
-                    current = ""
-                else:
-                    current = (("null" if current is None else current) + ("null" if c is None else c))
-            else:
-                if (len(current) > 0):
-                    tokens.append(current)
-                current = ""
-                tokens.append(c)
-        if (len(StringTools.trim(current)) > 0):
-            x3 = StringTools.trim(current)
-            tokens.append(x3)
-        return tokens
-
-    def tokenType(self,token):
-        key = self.syntax.keys()
-        while key.hasNext():
-            key1 = key.next()
-            if (self.tentativelyLower(token) == self.tentativelyLower(self.syntax.get(key1))):
-                return Token(key1)
-        return Token(Syntax.LITERAL,token)
-
-    def typeize(self,tokens):
-        _g = []
-        _g1 = 0
-        _g2 = len(tokens)
-        while (_g1 < _g2):
-            i = _g1
-            _g1 = (_g1 + 1)
-            x = self.tokenType((tokens[i] if i >= 0 and i < len(tokens) else None))
-            _g.append(x)
-        return _g
-
-
-
 class Reflect:
     _hx_class_name = "Reflect"
     __slots__ = ()
@@ -553,20 +237,20 @@ class Test:
     @staticmethod
     def main():
         _g = haxe_ds_EnumValueMap()
-        _g.set(Syntax.AND,"et")
-        _g.set(Syntax.OR,"ou")
-        _g.set(Syntax.XOR,"xou")
-        _g.set(Syntax.NOT,"non")
-        _g.set(Syntax.OPEN,"[")
-        _g.set(Syntax.CLOSE,"]")
-        ls = LogicString(_g)
+        _g.set(logipar_Syntax.AND,"et")
+        _g.set(logipar_Syntax.OR,"ou")
+        _g.set(logipar_Syntax.XOR,"xou")
+        _g.set(logipar_Syntax.NOT,"non")
+        _g.set(logipar_Syntax.OPEN,"[")
+        _g.set(logipar_Syntax.CLOSE,"]")
+        ls = logipar_Logipar(_g)
         ts = "[one=\"1 et 0\" et two] ou three et non[five]"
         ts = "[authors:\"J.\" OU sea] xou guts"
         ls.caseSensitive = False
         obj = ls.parse(ts)
         print(str(obj))
         def _hx_local_0(n):
-            if (n.token.type == Syntax.XOR):
+            if (n.token.type == logipar_Syntax.XOR):
                 return (((((((("((" + Std.string(n.left)) + " AND NOT ") + Std.string(n.right)) + ") OR (NOT ") + Std.string(n.left)) + " AND ") + Std.string(n.right)) + "))")
             return None
         s = ls.stringify(_hx_local_0)
@@ -820,6 +504,312 @@ class haxe_ds_GenericStack:
 
     def __init__(self):
         self.head = None
+
+
+
+class logipar_Logipar:
+    _hx_class_name = "logipar.Logipar"
+    __slots__ = ("quotations", "caseSensitive", "syntax", "tree")
+    _hx_fields = ["quotations", "caseSensitive", "syntax", "tree"]
+    _hx_methods = ["parse", "stringify", "filterFunction", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
+
+    def __init__(self,custom_syntax):
+        self.tree = None
+        _g = haxe_ds_EnumValueMap()
+        _g.set(logipar_Syntax.AND,"AND")
+        _g.set(logipar_Syntax.OR,"OR")
+        _g.set(logipar_Syntax.XOR,"XOR")
+        _g.set(logipar_Syntax.NOT,"NOT")
+        _g.set(logipar_Syntax.OPEN,"(")
+        _g.set(logipar_Syntax.CLOSE,")")
+        self.syntax = _g
+        self.caseSensitive = True
+        self.quotations = ["\"", "'"]
+        key = custom_syntax.keys()
+        while key.hasNext():
+            key1 = key.next()
+            if self.syntax.exists(key1):
+                self.syntax.set(key1,custom_syntax.get(key1))
+
+    def parse(self,logic_string):
+        tokens = self.tokenize(logic_string)
+        types = self.typeize(tokens)
+        reversepolish = self.shunt(types)
+        self.tree = self.treeify(reversepolish)
+        return self.tree
+
+    def stringify(self,f):
+        return self.tree.fancyString(f)
+
+    def filterFunction(self,f):
+        enclosed = self.tree
+        def _hx_local_0(a):
+            return enclosed.check(a,f)
+        return _hx_local_0
+
+    def treeify(self,tokens):
+        stack = haxe_ds_GenericStack()
+        _g = 0
+        _g1 = len(tokens)
+        while (_g < _g1):
+            i = _g
+            _g = (_g + 1)
+            token = (tokens[i] if i >= 0 and i < len(tokens) else None)
+            n = logipar_Node(token)
+            if (token.type != logipar_Syntax.LITERAL):
+                if (stack.head is None):
+                    raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.get(token.type))) + "' is missing a value to operate on (on its right)."))
+                k = stack.head
+                tmp = None
+                if (k is None):
+                    tmp = None
+                else:
+                    stack.head = k.next
+                    tmp = k.elt
+                n.right = tmp
+                if (token.type != logipar_Syntax.NOT):
+                    if (stack.head is None):
+                        raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.get(token.type))) + "' is missing a value to operate on (on its left)."))
+                    k1 = stack.head
+                    tmp1 = None
+                    if (k1 is None):
+                        tmp1 = None
+                    else:
+                        stack.head = k1.next
+                        tmp1 = k1.elt
+                    n.left = tmp1
+            stack.head = haxe_ds_GenericCell(n,stack.head)
+        k2 = stack.head
+        parsetree = None
+        if (k2 is None):
+            parsetree = None
+        else:
+            stack.head = k2.next
+            parsetree = k2.elt
+        parsetree1 = parsetree
+        if (stack.head is not None):
+            raise _HxException("Uhoh, the stack isn't empty.  Do you have neighbouring literals?")
+        return parsetree1
+
+    def shunt(self,tokens):
+        output = list()
+        operators = haxe_ds_GenericStack()
+        _g = 0
+        _g1 = len(tokens)
+        while (_g < _g1):
+            i = _g
+            _g = (_g + 1)
+            token = (tokens[i] if i >= 0 and i < len(tokens) else None)
+            tmp = token.type.index
+            if (tmp == 4):
+                operators.head = haxe_ds_GenericCell(token,operators.head)
+            elif (tmp == 5):
+                while True:
+                    k = operators.head
+                    op = None
+                    if (k is None):
+                        op = None
+                    else:
+                        operators.head = k.next
+                        op = k.elt
+                    op1 = op
+                    if (op1.type == logipar_Syntax.OPEN):
+                        break
+                    if (operators.head is None):
+                        raise _HxException("Mismatched parentheses.")
+                    output.append(op1)
+            elif (tmp == 6):
+                output.append(token)
+            else:
+                while (operators.head is not None):
+                    prev = (None if ((operators.head is None)) else operators.head.elt)
+                    if (prev.type == logipar_Syntax.OPEN):
+                        break
+                    if (prev.precedence() <= token.precedence()):
+                        break
+                    k1 = operators.head
+                    x = None
+                    if (k1 is None):
+                        x = None
+                    else:
+                        operators.head = k1.next
+                        x = k1.elt
+                    output.append(x)
+                operators.head = haxe_ds_GenericCell(token,operators.head)
+        while (operators.head is not None):
+            k2 = operators.head
+            o = None
+            if (k2 is None):
+                o = None
+            else:
+                operators.head = k2.next
+                o = k2.elt
+            o1 = o
+            if (o1.type == logipar_Syntax.OPEN):
+                raise _HxException("Mismatched parentheses.")
+            output.append(o1)
+        return output
+
+    def tentativelyLower(self,s):
+        if self.caseSensitive:
+            return s
+        else:
+            return Std.string(s).lower()
+
+    def tokenize(self,_hx_str):
+        tokens = []
+        _g = []
+        x = self.syntax.iterator()
+        while x.hasNext():
+            x1 = x.next()
+            x2 = self.tentativelyLower(x1)
+            _g.append(x2)
+        keys = _g
+        quotation = None
+        current = ""
+        _g1 = 0
+        _g2 = len(_hx_str)
+        while (_g1 < _g2):
+            i = _g1
+            _g1 = (_g1 + 1)
+            c = ("" if (((i < 0) or ((i >= len(_hx_str))))) else _hx_str[i])
+            if (python_internal_ArrayImpl.indexOf(keys,self.tentativelyLower(c),None) == -1):
+                if (python_internal_ArrayImpl.indexOf(self.quotations,c,None) != -1):
+                    if (quotation is None):
+                        quotation = c
+                    elif (quotation == c):
+                        quotation = None
+                if (StringTools.isSpace(c,0) and ((quotation is None))):
+                    if (len(current) > 0):
+                        tokens.append(current)
+                    current = ""
+                else:
+                    current = (("null" if current is None else current) + ("null" if c is None else c))
+            else:
+                if (len(current) > 0):
+                    tokens.append(current)
+                current = ""
+                tokens.append(c)
+        if (len(StringTools.trim(current)) > 0):
+            x3 = StringTools.trim(current)
+            tokens.append(x3)
+        return tokens
+
+    def tokenType(self,token):
+        key = self.syntax.keys()
+        while key.hasNext():
+            key1 = key.next()
+            if (self.tentativelyLower(token) == self.tentativelyLower(self.syntax.get(key1))):
+                return logipar_Token(key1)
+        return logipar_Token(logipar_Syntax.LITERAL,token)
+
+    def typeize(self,tokens):
+        _g = []
+        _g1 = 0
+        _g2 = len(tokens)
+        while (_g1 < _g2):
+            i = _g1
+            _g1 = (_g1 + 1)
+            x = self.tokenType((tokens[i] if i >= 0 and i < len(tokens) else None))
+            _g.append(x)
+        return _g
+
+
+
+class logipar_Node:
+    _hx_class_name = "logipar.Node"
+    __slots__ = ("token", "left", "right")
+    _hx_fields = ["token", "left", "right"]
+    _hx_methods = ["toString", "fancyString", "check"]
+
+    def __init__(self,token):
+        self.right = None
+        self.left = None
+        self.token = token
+
+    def toString(self):
+        return self.fancyString()
+
+    def fancyString(self,f = None):
+        s = None
+        if (f is not None):
+            s = f(self)
+        if (s is not None):
+            return s
+        tmp = self.token.type.index
+        if (tmp == 3):
+            return (("NOT(" + Std.string(self.right)) + ")")
+        elif (tmp == 6):
+            return (("{" + HxOverrides.stringOrNull(self.token.literal)) + "}")
+        else:
+            return (((((("(" + Std.string(self.left)) + " ") + Std.string(self.token.type)) + " ") + Std.string(self.right)) + ")")
+
+    def check(self,a,f):
+        tmp = self.token.type.index
+        if (tmp == 0):
+            if self.left.check(a,f):
+                return self.right.check(a,f)
+            else:
+                return False
+        elif (tmp == 1):
+            if (not self.left.check(a,f)):
+                return self.right.check(a,f)
+            else:
+                return True
+        elif (tmp == 2):
+            l = self.left.check(a,f)
+            r = self.right.check(a,f)
+            if (not (((not l) and r))):
+                if l:
+                    return (not r)
+                else:
+                    return False
+            else:
+                return True
+        elif (tmp == 3):
+            return (not self.right.check(a,f))
+        elif (tmp == 6):
+            return f(a,self.token.literal)
+        else:
+            raise _HxException("Unexpected token encountered.")
+
+
+class logipar_Syntax(Enum):
+    __slots__ = ()
+    _hx_class_name = "logipar.Syntax"
+    _hx_constructs = ["AND", "OR", "XOR", "NOT", "OPEN", "CLOSE", "LITERAL"]
+logipar_Syntax.AND = logipar_Syntax("AND", 0, list())
+logipar_Syntax.OR = logipar_Syntax("OR", 1, list())
+logipar_Syntax.XOR = logipar_Syntax("XOR", 2, list())
+logipar_Syntax.NOT = logipar_Syntax("NOT", 3, list())
+logipar_Syntax.OPEN = logipar_Syntax("OPEN", 4, list())
+logipar_Syntax.CLOSE = logipar_Syntax("CLOSE", 5, list())
+logipar_Syntax.LITERAL = logipar_Syntax("LITERAL", 6, list())
+
+
+class logipar_Token:
+    _hx_class_name = "logipar.Token"
+    __slots__ = ("type", "literal")
+    _hx_fields = ["type", "literal"]
+    _hx_methods = ["precedence", "toString"]
+
+    def __init__(self,_hx_type,literal = None):
+        self.type = _hx_type
+        self.literal = literal
+
+    def precedence(self):
+        tmp = self.type.index
+        if ((tmp == 3) or ((tmp == 0))):
+            return 2
+        elif ((tmp == 2) or ((tmp == 1))):
+            return 1
+        else:
+            return 0
+
+    def toString(self):
+        if (self.type == logipar_Syntax.LITERAL):
+            return (("LITERAL(" + HxOverrides.stringOrNull(self.literal)) + ")")
+        return Std.string(self.type)
 
 
 

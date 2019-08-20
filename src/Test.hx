@@ -1,16 +1,18 @@
 using StringTools;
+//import logipar.Syntax;
+//import logipar.Logipar;
 
 class Test {
 	static public function main():Void {
 		
 		
-		var ls = new LogicString([
-			LogicString.Syntax.AND => 'et',
-			LogicString.Syntax.OR => 'ou',
-			LogicString.Syntax.XOR => 'xou',
-			LogicString.Syntax.NOT => 'non',
-			LogicString.Syntax.OPEN => '[',
-			LogicString.Syntax.CLOSE => ']'
+		var ls = new logipar.Logipar([
+			logipar.Syntax.AND => 'et',
+			logipar.Syntax.OR => 'ou',
+			logipar.Syntax.XOR => 'xou',
+			logipar.Syntax.NOT => 'non',
+			logipar.Syntax.OPEN => '[',
+			logipar.Syntax.CLOSE => ']'
 		]);
 		
 		var ts = '[one="1 et 0" et two] ou three et non[five]';
@@ -23,10 +25,10 @@ class Test {
 		ts = '[authors:"J." OU sea] xou guts';
 		//ts = 'authors:J';
 		ls.caseSensitive = false; // *** Implement this.  It's so our AND and OR etc can be any case
-		var obj:LogicString.Node = ls.parse(ts);
+		var obj:logipar.Node = ls.parse(ts);
 		trace(obj);
-		var s = ls.stringify(function(n:LogicString.Node):String {
-			if (n.token.type == LogicString.Syntax.XOR) {
+		var s = ls.stringify(function(n:logipar.Node):String {
+			if (n.token.type == logipar.Syntax.XOR) {
 				return "((" + n.left + " AND NOT " + n.right + ") OR (NOT " + n.left + " AND " + n.right + "))";
 			}
 			return null;

@@ -3,20 +3,20 @@
 --each
 
 
-LogicString 
---js lib/LogicString.js
+logipar.Logipar 
+--js lib/logipar.js
 
 --next 
 
-LogicString 
+logipar.Logipar
 --php lib/php
 
 --next 
 
-LogicString 
---python lib/LogicString.py
+logipar.Logipar 
+--python lib/logipar.py
 
 --next 
 
-LogicString 
---neko lib/LogicString.n
+logipar.Logipar 
+--neko lib/logipar.n

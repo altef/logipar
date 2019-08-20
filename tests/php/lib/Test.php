@@ -7,130 +7,132 @@ use \php\_Boot\HxAnon;
 use \php\Boot;
 use \haxe\Log;
 use \php\_Boot\HxString;
+use \logipar\Syntax;
 use \haxe\ds\EnumValueMap;
+use \logipar\Logipar;
 
 class Test {
 	/**
 	 * @return void
 	 */
 	static public function main () {
-		#src/Test.hx:7: lines 7-14
+		#src/Test.hx:9: lines 9-16
 		$_g = new EnumValueMap();
-		$_g->set(\Syntax::AND(), "et");
-		$_g->set(\Syntax::OR(), "ou");
-		$_g->set(\Syntax::XOR(), "xou");
-		$_g->set(\Syntax::NOT(), "non");
-		$_g->set(\Syntax::OPEN(), "[");
-		$_g->set(\Syntax::CLOSE(), "]");
-		$ls = new \LogicString($_g);
-		#src/Test.hx:16: characters 3-58
+		$_g->set(Syntax::AND(), "et");
+		$_g->set(Syntax::OR(), "ou");
+		$_g->set(Syntax::XOR(), "xou");
+		$_g->set(Syntax::NOT(), "non");
+		$_g->set(Syntax::OPEN(), "[");
+		$_g->set(Syntax::CLOSE(), "]");
+		$ls = new Logipar($_g);
+		#src/Test.hx:18: characters 3-58
 		$ts = "[one=\"1 et 0\" et two] ou three et non[five]";
-		#src/Test.hx:23: characters 3-40
+		#src/Test.hx:25: characters 3-40
 		$ts = "[authors:\"J.\" OU sea] xou guts";
-		#src/Test.hx:25: characters 3-27
+		#src/Test.hx:27: characters 3-27
 		$ls->caseSensitive = false;
-		#src/Test.hx:26: characters 3-43
+		#src/Test.hx:28: characters 3-39
 		$obj = $ls->parse($ts);
-		#src/Test.hx:27: characters 3-8
+		#src/Test.hx:29: characters 3-8
 		(Log::$trace)($obj, new HxAnon([
 			"fileName" => "src/Test.hx",
-			"lineNumber" => 27,
+			"lineNumber" => 29,
 			"className" => "Test",
 			"methodName" => "main",
 		]));
-		#src/Test.hx:28: lines 28-33
+		#src/Test.hx:30: lines 30-35
 		$s = $ls->stringify(function ($n) {
-			#src/Test.hx:29: lines 29-31
-			if ($n->token->type === \Syntax::XOR()) {
-				#src/Test.hx:30: characters 5-100
+			#src/Test.hx:31: lines 31-33
+			if ($n->token->type === Syntax::XOR()) {
+				#src/Test.hx:32: characters 5-100
 				return "((" . (\Std::string($n->left)??'null') . " AND NOT " . (\Std::string($n->right)??'null') . ") OR (NOT " . (\Std::string($n->left)??'null') . " AND " . (\Std::string($n->right)??'null') . "))";
 			}
-			#src/Test.hx:32: characters 4-15
+			#src/Test.hx:34: characters 4-15
 			return null;
 		});
-		#src/Test.hx:34: characters 3-8
+		#src/Test.hx:36: characters 3-8
 		(Log::$trace)($s, new HxAnon([
 			"fileName" => "src/Test.hx",
-			"lineNumber" => 34,
+			"lineNumber" => 36,
 			"className" => "Test",
 			"methodName" => "main",
 		]));
-		#src/Test.hx:38: lines 38-57
+		#src/Test.hx:40: lines 40-59
 		$f = $ls->filterFunction(function ($row, $value) {
-			#src/Test.hx:39: characters 4-34
+			#src/Test.hx:41: characters 4-34
 			$value = \StringTools::replace($value, "\"", "");
-			#src/Test.hx:40: lines 40-55
+			#src/Test.hx:42: lines 42-57
 			if (HxString::indexOf($value, ":") === -1) {
-				#src/Test.hx:42: lines 42-45
+				#src/Test.hx:44: lines 44-47
 				$_g1 = 0;
 				$_g2 = \Reflect::fields($row);
 				while ($_g1 < $_g2->length) {
-					#src/Test.hx:42: characters 10-11
+					#src/Test.hx:44: characters 10-11
 					$f1 = ($_g2->arr[$_g1] ?? null);
-					#src/Test.hx:42: lines 42-45
+					#src/Test.hx:44: lines 44-47
 					++$_g1;
-					#src/Test.hx:43: lines 43-44
+					#src/Test.hx:45: lines 45-46
 					if (HxString::indexOf(mb_strtolower(\Std::string(\Reflect::field($row, $f1))), mb_strtolower($value)) !== -1) {
-						#src/Test.hx:44: characters 7-18
+						#src/Test.hx:46: characters 7-18
 						return true;
 					}
 				}
 			} else {
-				#src/Test.hx:48: characters 5-35
+				#src/Test.hx:50: characters 5-35
 				$chunks = HxString::split($value, ":");
-				#src/Test.hx:49: characters 17-31
+				#src/Test.hx:51: characters 17-31
 				if ($chunks->length > 0) {
 					$chunks->length--;
 				}
-				#src/Test.hx:49: characters 5-32
+				#src/Test.hx:51: characters 5-32
 				$field = array_shift($chunks->arr);
-				#src/Test.hx:50: characters 5-32
+				#src/Test.hx:52: characters 5-32
 				$val = $chunks->join(":");
-				#src/Test.hx:51: lines 51-54
+				#src/Test.hx:53: lines 53-56
 				if (\Reflect::hasField($row, $field)) {
-					#src/Test.hx:52: lines 52-53
+					#src/Test.hx:54: lines 54-55
 					if (HxString::indexOf(mb_strtolower(\Std::string(\Reflect::field($row, $field))), mb_strtolower($val)) !== -1) {
-						#src/Test.hx:53: characters 7-18
+						#src/Test.hx:55: characters 7-18
 						return true;
 					}
 				}
 			}
-			#src/Test.hx:56: characters 4-16
+			#src/Test.hx:58: characters 4-16
 			return false;
 		});
-		#src/Test.hx:59: characters 3-8
+		#src/Test.hx:61: characters 3-8
 		(Log::$trace)("Filtering sample data:", new HxAnon([
 			"fileName" => "src/Test.hx",
-			"lineNumber" => 59,
+			"lineNumber" => 61,
 			"className" => "Test",
 			"methodName" => "main",
 		]));
-		#src/Test.hx:60: characters 3-29
+		#src/Test.hx:62: characters 3-29
 		$d = new \Array_hx();
-		#src/Test.hx:61: lines 61-64
+		#src/Test.hx:63: lines 63-66
 		$_g11 = 0;
 		$_g21 = \SampleData::$data->length;
 		while ($_g11 < $_g21) {
 			$i = $_g11++;
-			#src/Test.hx:62: lines 62-63
+			#src/Test.hx:64: lines 64-65
 			if ($f((\SampleData::$data->arr[$i] ?? null))) {
-				#src/Test.hx:63: characters 5-31
+				#src/Test.hx:65: characters 5-31
 				$d->arr[$d->length] = (\SampleData::$data->arr[$i] ?? null);
 				++$d->length;
 			}
 		}
 
-		#src/Test.hx:66: lines 66-68
+		#src/Test.hx:68: lines 68-70
 		$_g3 = 0;
 		while ($_g3 < $d->length) {
-			#src/Test.hx:66: characters 7-11
+			#src/Test.hx:68: characters 7-11
 			$book = ($d->arr[$_g3] ?? null);
-			#src/Test.hx:66: lines 66-68
+			#src/Test.hx:68: lines 68-70
 			++$_g3;
-			#src/Test.hx:68: characters 4-9
+			#src/Test.hx:70: characters 4-9
 			(Log::$trace)((\Std::string(Boot::dynamicField($book, 'title'))??'null') . " by " . (\Std::string(Boot::dynamicField($book, 'authors'))??'null'), new HxAnon([
 				"fileName" => "src/Test.hx",
-				"lineNumber" => 68,
+				"lineNumber" => 70,
 				"className" => "Test",
 				"methodName" => "main",
 			]));
