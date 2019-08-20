@@ -4,6 +4,7 @@
 import math as python_lib_Math
 import math as Math
 import inspect as python_lib_Inspect
+from io import StringIO as python_lib_io_StringIO
 
 
 class Enum:
@@ -26,142 +27,14 @@ class Enum:
 
 
 
-class Class: pass
-
-
-class Reflect:
-    _hx_class_name = "Reflect"
-    __slots__ = ()
-    _hx_statics = ["compare", "isEnumValue"]
-
-    @staticmethod
-    def compare(a,b):
-        if ((a is None) and ((b is None))):
-            return 0
-        if (a is None):
-            return 1
-        elif (b is None):
-            return -1
-        elif HxOverrides.eq(a,b):
-            return 0
-        elif (a > b):
-            return 1
-        else:
-            return -1
-
-    @staticmethod
-    def isEnumValue(v):
-        if not HxOverrides.eq(v,Enum):
-            return isinstance(v,Enum)
-        else:
-            return False
-
-
 class Std:
     _hx_class_name = "Std"
     __slots__ = ()
-    _hx_statics = ["is", "string"]
-
-    @staticmethod
-    def _hx_is(v,t):
-        if ((v is None) and ((t is None))):
-            return False
-        if (t is None):
-            return False
-        if (t == Dynamic):
-            return (v is not None)
-        isBool = isinstance(v,bool)
-        if ((t == Bool) and isBool):
-            return True
-        if ((((not isBool) and (not (t == Bool))) and (t == Int)) and isinstance(v,int)):
-            return True
-        vIsFloat = isinstance(v,float)
-        tmp = None
-        tmp1 = None
-        if (((not isBool) and vIsFloat) and (t == Int)):
-            f = v
-            tmp1 = (((f != Math.POSITIVE_INFINITY) and ((f != Math.NEGATIVE_INFINITY))) and (not python_lib_Math.isnan(f)))
-        else:
-            tmp1 = False
-        if tmp1:
-            tmp2 = None
-            try:
-                tmp2 = int(v)
-            except Exception as _hx_e:
-                _hx_e1 = _hx_e.val if isinstance(_hx_e, _HxException) else _hx_e
-                e = _hx_e1
-                tmp2 = None
-            tmp = (v == tmp2)
-        else:
-            tmp = False
-        if ((tmp and ((v <= 2147483647))) and ((v >= -2147483648))):
-            return True
-        if (((not isBool) and (t == Float)) and isinstance(v,(float, int))):
-            return True
-        if (t == str):
-            return isinstance(v,str)
-        isEnumType = (t == Enum)
-        if ((isEnumType and python_lib_Inspect.isclass(v)) and hasattr(v,"_hx_constructs")):
-            return True
-        if isEnumType:
-            return False
-        isClassType = (t == Class)
-        if ((((isClassType and (not isinstance(v,Enum))) and python_lib_Inspect.isclass(v)) and hasattr(v,"_hx_class_name")) and (not hasattr(v,"_hx_constructs"))):
-            return True
-        if isClassType:
-            return False
-        tmp3 = None
-        try:
-            tmp3 = isinstance(v,t)
-        except Exception as _hx_e:
-            _hx_e1 = _hx_e.val if isinstance(_hx_e, _HxException) else _hx_e
-            e1 = _hx_e1
-            tmp3 = False
-        if tmp3:
-            return True
-        if python_lib_Inspect.isclass(t):
-            loop = None
-            def _hx_local_1(intf):
-                f1 = (intf._hx_interfaces if (hasattr(intf,"_hx_interfaces")) else [])
-                if (f1 is not None):
-                    _g = 0
-                    while (_g < len(f1)):
-                        i = (f1[_g] if _g >= 0 and _g < len(f1) else None)
-                        _g = (_g + 1)
-                        if HxOverrides.eq(i,t):
-                            return True
-                        else:
-                            l = loop(i)
-                            if l:
-                                return True
-                    return False
-                else:
-                    return False
-            loop = _hx_local_1
-            currentClass = v.__class__
-            while (currentClass is not None):
-                if loop(currentClass):
-                    return True
-                currentClass = python_Boot.getSuperClass(currentClass)
-            return False
-        else:
-            return False
+    _hx_statics = ["string"]
 
     @staticmethod
     def string(s):
         return python_Boot.toString1(s,"")
-
-
-class Float: pass
-
-
-class Int: pass
-
-
-class Bool: pass
-
-
-class Dynamic: pass
 
 
 class StringTools:
@@ -212,191 +85,6 @@ class haxe_IMap:
     _hx_methods = ["toString"]
 
 
-class haxe_ds_BalancedTree:
-    _hx_class_name = "haxe.ds.BalancedTree"
-    __slots__ = ("root",)
-    _hx_fields = ["root"]
-    _hx_methods = ["set", "get", "exists", "iterator", "keys", "setLoop", "iteratorLoop", "keysLoop", "balance", "compare", "toString"]
-    _hx_interfaces = [haxe_IMap]
-
-    def __init__(self):
-        self.root = None
-
-    def set(self,key,value):
-        self.root = self.setLoop(key,value,self.root)
-
-    def get(self,key):
-        node = self.root
-        while (node is not None):
-            c = self.compare(key,node.key)
-            if (c == 0):
-                return node.value
-            if (c < 0):
-                node = node.left
-            else:
-                node = node.right
-        return None
-
-    def exists(self,key):
-        node = self.root
-        while (node is not None):
-            c = self.compare(key,node.key)
-            if (c == 0):
-                return True
-            elif (c < 0):
-                node = node.left
-            else:
-                node = node.right
-        return False
-
-    def iterator(self):
-        ret = []
-        self.iteratorLoop(self.root,ret)
-        return python_HaxeIterator(ret.__iter__())
-
-    def keys(self):
-        ret = []
-        self.keysLoop(self.root,ret)
-        return python_HaxeIterator(ret.__iter__())
-
-    def setLoop(self,k,v,node):
-        if (node is None):
-            return haxe_ds_TreeNode(None,k,v,None)
-        c = self.compare(k,node.key)
-        if (c == 0):
-            return haxe_ds_TreeNode(node.left,k,v,node.right,(0 if ((node is None)) else node._height))
-        elif (c < 0):
-            nl = self.setLoop(k,v,node.left)
-            return self.balance(nl,node.key,node.value,node.right)
-        else:
-            nr = self.setLoop(k,v,node.right)
-            return self.balance(node.left,node.key,node.value,nr)
-
-    def iteratorLoop(self,node,acc):
-        if (node is not None):
-            self.iteratorLoop(node.left,acc)
-            x = node.value
-            acc.append(x)
-            self.iteratorLoop(node.right,acc)
-
-    def keysLoop(self,node,acc):
-        if (node is not None):
-            self.keysLoop(node.left,acc)
-            x = node.key
-            acc.append(x)
-            self.keysLoop(node.right,acc)
-
-    def balance(self,l,k,v,r):
-        hl = (0 if ((l is None)) else l._height)
-        hr = (0 if ((r is None)) else r._height)
-        if (hl > ((hr + 2))):
-            _this = l.left
-            _this1 = l.right
-            if (((0 if ((_this is None)) else _this._height)) >= ((0 if ((_this1 is None)) else _this1._height))):
-                return haxe_ds_TreeNode(l.left,l.key,l.value,haxe_ds_TreeNode(l.right,k,v,r))
-            else:
-                return haxe_ds_TreeNode(haxe_ds_TreeNode(l.left,l.key,l.value,l.right.left),l.right.key,l.right.value,haxe_ds_TreeNode(l.right.right,k,v,r))
-        elif (hr > ((hl + 2))):
-            _this2 = r.right
-            _this3 = r.left
-            if (((0 if ((_this2 is None)) else _this2._height)) > ((0 if ((_this3 is None)) else _this3._height))):
-                return haxe_ds_TreeNode(haxe_ds_TreeNode(l,k,v,r.left),r.key,r.value,r.right)
-            else:
-                return haxe_ds_TreeNode(haxe_ds_TreeNode(l,k,v,r.left.left),r.left.key,r.left.value,haxe_ds_TreeNode(r.left.right,r.key,r.value,r.right))
-        else:
-            return haxe_ds_TreeNode(l,k,v,r,(((hl if ((hl > hr)) else hr)) + 1))
-
-    def compare(self,k1,k2):
-        return Reflect.compare(k1,k2)
-
-    def toString(self):
-        if (self.root is None):
-            return "{}"
-        else:
-            return (("{" + HxOverrides.stringOrNull(self.root.toString())) + "}")
-
-
-
-class haxe_ds_TreeNode:
-    _hx_class_name = "haxe.ds.TreeNode"
-    __slots__ = ("left", "right", "key", "value", "_height")
-    _hx_fields = ["left", "right", "key", "value", "_height"]
-    _hx_methods = ["toString"]
-
-    def __init__(self,l,k,v,r,h = -1):
-        if (h is None):
-            h = -1
-        self._height = None
-        self.left = l
-        self.key = k
-        self.value = v
-        self.right = r
-        if (h == -1):
-            tmp = None
-            _this = self.left
-            _this1 = self.right
-            if (((0 if ((_this is None)) else _this._height)) > ((0 if ((_this1 is None)) else _this1._height))):
-                _this2 = self.left
-                tmp = (0 if ((_this2 is None)) else _this2._height)
-            else:
-                _this3 = self.right
-                tmp = (0 if ((_this3 is None)) else _this3._height)
-            self._height = (tmp + 1)
-        else:
-            self._height = h
-
-    def toString(self):
-        return ((HxOverrides.stringOrNull((("" if ((self.left is None)) else (HxOverrides.stringOrNull(self.left.toString()) + ", ")))) + (((("" + Std.string(self.key)) + "=") + Std.string(self.value)))) + HxOverrides.stringOrNull((("" if ((self.right is None)) else (", " + HxOverrides.stringOrNull(self.right.toString()))))))
-
-
-
-class haxe_ds_EnumValueMap(haxe_ds_BalancedTree):
-    _hx_class_name = "haxe.ds.EnumValueMap"
-    __slots__ = ()
-    _hx_fields = []
-    _hx_methods = ["compare", "compareArgs", "compareArg"]
-    _hx_statics = []
-    _hx_interfaces = [haxe_IMap]
-    _hx_super = haxe_ds_BalancedTree
-
-
-    def __init__(self):
-        super().__init__()
-
-    def compare(self,k1,k2):
-        d = (k1.index - k2.index)
-        if (d != 0):
-            return d
-        p1 = k1.params
-        p2 = k2.params
-        if ((len(p1) == 0) and ((len(p2) == 0))):
-            return 0
-        return self.compareArgs(p1,p2)
-
-    def compareArgs(self,a1,a2):
-        ld = (len(a1) - len(a2))
-        if (ld != 0):
-            return ld
-        _g = 0
-        _g1 = len(a1)
-        while (_g < _g1):
-            i = _g
-            _g = (_g + 1)
-            d = self.compareArg((a1[i] if i >= 0 and i < len(a1) else None),(a2[i] if i >= 0 and i < len(a2) else None))
-            if (d != 0):
-                return d
-        return 0
-
-    def compareArg(self,v1,v2):
-        if (Reflect.isEnumValue(v1) and Reflect.isEnumValue(v2)):
-            return self.compare(v1,v2)
-        elif (Std._hx_is(v1,list) and Std._hx_is(v2,list)):
-            return self.compareArgs(v1,v2)
-        else:
-            return Reflect.compare(v1,v2)
-
-
-
 class haxe_ds_GenericCell:
     _hx_class_name = "haxe.ds.GenericCell"
     __slots__ = ("elt", "next")
@@ -418,30 +106,64 @@ class haxe_ds_GenericStack:
 
 
 
+class haxe_ds_StringMap:
+    _hx_class_name = "haxe.ds.StringMap"
+    __slots__ = ("h",)
+    _hx_fields = ["h"]
+    _hx_methods = ["keys", "iterator", "toString"]
+
+    def __init__(self):
+        self.h = dict()
+
+    def keys(self):
+        return python_HaxeIterator(iter(self.h.keys()))
+
+    def iterator(self):
+        return python_HaxeIterator(iter(self.h.values()))
+
+    def toString(self):
+        s_b = python_lib_io_StringIO()
+        s_b.write("{")
+        it = self.keys()
+        i = it
+        while i.hasNext():
+            i1 = i.next()
+            s_b.write(Std.string(i1))
+            s_b.write(" => ")
+            s_b.write(Std.string(Std.string(self.h.get(i1,None))))
+            if it.hasNext():
+                s_b.write(", ")
+        s_b.write("}")
+        return s_b.getvalue()
+
+
+
 class logipar_Logipar:
     _hx_class_name = "logipar.Logipar"
     __slots__ = ("quotations", "caseSensitive", "syntax", "tree")
     _hx_fields = ["quotations", "caseSensitive", "syntax", "tree"]
-    _hx_methods = ["parse", "stringify", "filterFunction", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
+    _hx_methods = ["parse", "stringify", "filterFunction", "toString", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
 
-    def __init__(self,custom_syntax = None):
+    def __init__(self,custom_operators = None):
         self.tree = None
-        _g = haxe_ds_EnumValueMap()
-        _g.set(logipar_Syntax.AND,"AND")
-        _g.set(logipar_Syntax.OR,"OR")
-        _g.set(logipar_Syntax.XOR,"XOR")
-        _g.set(logipar_Syntax.NOT,"NOT")
-        _g.set(logipar_Syntax.OPEN,"(")
-        _g.set(logipar_Syntax.CLOSE,")")
+        _g = haxe_ds_StringMap()
+        _g.h["AND"] = "AND"
+        _g.h["OR"] = "OR"
+        _g.h["XOR"] = "XOR"
+        _g.h["NOT"] = "NOT"
+        _g.h["OPEN"] = "("
+        _g.h["CLOSE"] = ")"
         self.syntax = _g
         self.caseSensitive = True
         self.quotations = ["\"", "'"]
-        if (custom_syntax is not None):
-            key = custom_syntax.keys()
+        if (custom_operators is not None):
+            key = custom_operators.keys()
             while key.hasNext():
                 key1 = key.next()
-                if self.syntax.exists(key1):
-                    self.syntax.set(key1,custom_syntax.get(key1))
+                if (key1 in self.syntax.h):
+                    this1 = self.syntax
+                    value = custom_operators.h.get(key1,None)
+                    this1.h[key1] = value
 
     def parse(self,logic_string):
         tokens = self.tokenize(logic_string)
@@ -462,6 +184,9 @@ class logipar_Logipar:
             return enclosed.check(a,f)
         return _hx_local_0
 
+    def toString(self):
+        return self.stringify()
+
     def treeify(self,tokens):
         stack = haxe_ds_GenericStack()
         _g = 0
@@ -471,9 +196,9 @@ class logipar_Logipar:
             _g = (_g + 1)
             token = (tokens[i] if i >= 0 and i < len(tokens) else None)
             n = logipar_Node(token)
-            if (token.type != logipar_Syntax.LITERAL):
+            if (token.type != "LITERAL"):
                 if (stack.head is None):
-                    raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.get(token.type))) + "' is missing a value to operate on (on its right)."))
+                    raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.h.get(token.type,None))) + "' is missing a value to operate on (on its right)."))
                 k = stack.head
                 tmp = None
                 if (k is None):
@@ -482,9 +207,9 @@ class logipar_Logipar:
                     stack.head = k.next
                     tmp = k.elt
                 n.right = tmp
-                if (token.type != logipar_Syntax.NOT):
+                if (token.type != "NOT"):
                     if (stack.head is None):
-                        raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.get(token.type))) + "' is missing a value to operate on (on its left)."))
+                        raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.h.get(token.type,None))) + "' is missing a value to operate on (on its left)."))
                     k1 = stack.head
                     tmp1 = None
                     if (k1 is None):
@@ -515,30 +240,82 @@ class logipar_Logipar:
             i = _g
             _g = (_g + 1)
             token = (tokens[i] if i >= 0 and i < len(tokens) else None)
-            tmp = token.type.index
-            if (tmp == 4):
-                operators.head = haxe_ds_GenericCell(token,operators.head)
-            elif (tmp == 5):
-                while True:
-                    k = operators.head
-                    op = None
-                    if (k is None):
+            _g2 = token.type
+            _hx_local_0 = len(_g2)
+            if (_hx_local_0 == 5):
+                if (_g2 == "CLOSE"):
+                    while True:
+                        k = operators.head
                         op = None
-                    else:
-                        operators.head = k.next
-                        op = k.elt
-                    op1 = op
-                    if (op1.type == logipar_Syntax.OPEN):
-                        break
-                    if (operators.head is None):
-                        raise _HxException("Mismatched parentheses.")
-                    output.append(op1)
-            elif (tmp == 6):
-                output.append(token)
+                        if (k is None):
+                            op = None
+                        else:
+                            operators.head = k.next
+                            op = k.elt
+                        op1 = op
+                        if (op1.type == "OPEN"):
+                            break
+                        if (operators.head is None):
+                            raise _HxException("Mismatched parentheses.")
+                        output.append(op1)
+                else:
+                    while (operators.head is not None):
+                        prev = (None if ((operators.head is None)) else operators.head.elt)
+                        if (prev.type == "OPEN"):
+                            break
+                        if (prev.precedence() <= token.precedence()):
+                            break
+                        k1 = operators.head
+                        x = None
+                        if (k1 is None):
+                            x = None
+                        else:
+                            operators.head = k1.next
+                            x = k1.elt
+                        output.append(x)
+                    operators.head = haxe_ds_GenericCell(token,operators.head)
+            elif (_hx_local_0 == 4):
+                if (_g2 == "OPEN"):
+                    operators.head = haxe_ds_GenericCell(token,operators.head)
+                else:
+                    while (operators.head is not None):
+                        prev = (None if ((operators.head is None)) else operators.head.elt)
+                        if (prev.type == "OPEN"):
+                            break
+                        if (prev.precedence() <= token.precedence()):
+                            break
+                        k1 = operators.head
+                        x = None
+                        if (k1 is None):
+                            x = None
+                        else:
+                            operators.head = k1.next
+                            x = k1.elt
+                        output.append(x)
+                    operators.head = haxe_ds_GenericCell(token,operators.head)
+            elif (_hx_local_0 == 7):
+                if (_g2 == "LITERAL"):
+                    output.append(token)
+                else:
+                    while (operators.head is not None):
+                        prev = (None if ((operators.head is None)) else operators.head.elt)
+                        if (prev.type == "OPEN"):
+                            break
+                        if (prev.precedence() <= token.precedence()):
+                            break
+                        k1 = operators.head
+                        x = None
+                        if (k1 is None):
+                            x = None
+                        else:
+                            operators.head = k1.next
+                            x = k1.elt
+                        output.append(x)
+                    operators.head = haxe_ds_GenericCell(token,operators.head)
             else:
                 while (operators.head is not None):
                     prev = (None if ((operators.head is None)) else operators.head.elt)
-                    if (prev.type == logipar_Syntax.OPEN):
+                    if (prev.type == "OPEN"):
                         break
                     if (prev.precedence() <= token.precedence()):
                         break
@@ -560,7 +337,7 @@ class logipar_Logipar:
                 operators.head = k2.next
                 o = k2.elt
             o1 = o
-            if (o1.type == logipar_Syntax.OPEN):
+            if (o1.type == "OPEN"):
                 raise _HxException("Mismatched parentheses.")
             output.append(o1)
         return output
@@ -614,9 +391,9 @@ class logipar_Logipar:
         key = self.syntax.keys()
         while key.hasNext():
             key1 = key.next()
-            if (self.tentativelyLower(token) == self.tentativelyLower(self.syntax.get(key1))):
+            if (self.tentativelyLower(token) == self.tentativelyLower(self.syntax.h.get(key1,None))):
                 return logipar_Token(key1)
-        return logipar_Token(logipar_Syntax.LITERAL,token)
+        return logipar_Token("LITERAL",token)
 
     def typeize(self,tokens):
         _g = []
@@ -654,55 +431,60 @@ class logipar_Node:
             self.f = None
         if (s is not None):
             return s
-        tmp = self.token.type.index
-        if (tmp == 3):
-            return (("NOT(" + HxOverrides.stringOrNull(self.right.fancyString(f))) + ")")
-        elif (tmp == 6):
-            return (("{" + HxOverrides.stringOrNull(self.token.literal)) + "}")
+        _g = self.token.type
+        _hx_local_0 = len(_g)
+        if (_hx_local_0 == 7):
+            if (_g == "LITERAL"):
+                return (("{" + HxOverrides.stringOrNull(self.token.literal)) + "}")
+            else:
+                return (((((("(" + HxOverrides.stringOrNull(self.left.fancyString(f))) + " ") + Std.string(self.token.type)) + " ") + HxOverrides.stringOrNull(self.right.fancyString(f))) + ")")
+        elif (_hx_local_0 == 3):
+            if (_g == "NOT"):
+                return (("NOT(" + HxOverrides.stringOrNull(self.right.fancyString(f))) + ")")
+            else:
+                return (((((("(" + HxOverrides.stringOrNull(self.left.fancyString(f))) + " ") + Std.string(self.token.type)) + " ") + HxOverrides.stringOrNull(self.right.fancyString(f))) + ")")
         else:
             return (((((("(" + HxOverrides.stringOrNull(self.left.fancyString(f))) + " ") + Std.string(self.token.type)) + " ") + HxOverrides.stringOrNull(self.right.fancyString(f))) + ")")
 
     def check(self,a,f):
-        tmp = self.token.type.index
-        if (tmp == 0):
-            if self.left.check(a,f):
-                return self.right.check(a,f)
-            else:
-                return False
-        elif (tmp == 1):
-            if (not self.left.check(a,f)):
-                return self.right.check(a,f)
-            else:
-                return True
-        elif (tmp == 2):
-            l = self.left.check(a,f)
-            r = self.right.check(a,f)
-            if (not (((not l) and r))):
-                if l:
-                    return (not r)
+        _g = self.token.type
+        _hx_local_0 = len(_g)
+        if (_hx_local_0 == 3):
+            if (_g == "AND"):
+                if self.left.check(a,f):
+                    return self.right.check(a,f)
                 else:
                     return False
+            elif (_g == "NOT"):
+                return (not self.right.check(a,f))
+            elif (_g == "XOR"):
+                l = self.left.check(a,f)
+                r = self.right.check(a,f)
+                if (not (((not l) and r))):
+                    if l:
+                        return (not r)
+                    else:
+                        return False
+                else:
+                    return True
             else:
-                return True
-        elif (tmp == 3):
-            return (not self.right.check(a,f))
-        elif (tmp == 6):
-            return f(a,self.token.literal)
+                raise _HxException("Unexpected token encountered.")
+        elif (_hx_local_0 == 7):
+            if (_g == "LITERAL"):
+                return f(a,self.token.literal)
+            else:
+                raise _HxException("Unexpected token encountered.")
+        elif (_hx_local_0 == 2):
+            if (_g == "OR"):
+                if (not self.left.check(a,f)):
+                    return self.right.check(a,f)
+                else:
+                    return True
+            else:
+                raise _HxException("Unexpected token encountered.")
         else:
             raise _HxException("Unexpected token encountered.")
 
-
-class logipar_Syntax(Enum):
-    __slots__ = ()
-    _hx_class_name = "logipar.Syntax"
-    _hx_constructs = ["AND", "OR", "XOR", "NOT", "OPEN", "CLOSE", "LITERAL"]
-logipar_Syntax.AND = logipar_Syntax("AND", 0, list())
-logipar_Syntax.OR = logipar_Syntax("OR", 1, list())
-logipar_Syntax.XOR = logipar_Syntax("XOR", 2, list())
-logipar_Syntax.NOT = logipar_Syntax("NOT", 3, list())
-logipar_Syntax.OPEN = logipar_Syntax("OPEN", 4, list())
-logipar_Syntax.CLOSE = logipar_Syntax("CLOSE", 5, list())
-logipar_Syntax.LITERAL = logipar_Syntax("LITERAL", 6, list())
 
 
 class logipar_Token:
@@ -710,22 +492,34 @@ class logipar_Token:
     __slots__ = ("type", "literal")
     _hx_fields = ["type", "literal"]
     _hx_methods = ["precedence", "toString"]
+    _hx_statics = ["AND", "OR", "XOR", "NOT", "OPEN", "CLOSE", "LITERAL"]
 
     def __init__(self,_hx_type,literal = None):
         self.type = _hx_type
         self.literal = literal
 
     def precedence(self):
-        tmp = self.type.index
-        if ((tmp == 3) or ((tmp == 0))):
-            return 2
-        elif ((tmp == 2) or ((tmp == 1))):
-            return 1
+        _g = self.type
+        _hx_local_0 = len(_g)
+        if (_hx_local_0 == 3):
+            if (_g == "AND"):
+                return 2
+            elif (_g == "NOT"):
+                return 2
+            elif (_g == "XOR"):
+                return 1
+            else:
+                return 0
+        elif (_hx_local_0 == 2):
+            if (_g == "OR"):
+                return 1
+            else:
+                return 0
         else:
             return 0
 
     def toString(self):
-        if (self.type == logipar_Syntax.LITERAL):
+        if (self.type == "LITERAL"):
             return (("LITERAL(" + HxOverrides.stringOrNull(self.literal)) + ")")
         return Std.string(self.type)
 
@@ -1025,7 +819,6 @@ class _HxException(Exception):
     _hx_fields = ["val"]
     _hx_methods = []
     _hx_statics = []
-    _hx_interfaces = []
     _hx_super = Exception
 
 
@@ -1101,5 +894,12 @@ Math.POSITIVE_INFINITY = float("inf")
 Math.NaN = float("nan")
 Math.PI = python_lib_Math.pi
 
+logipar_Token.AND = "AND"
+logipar_Token.OR = "OR"
+logipar_Token.XOR = "XOR"
+logipar_Token.NOT = "NOT"
+logipar_Token.OPEN = "OPEN"
+logipar_Token.CLOSE = "CLOSE"
+logipar_Token.LITERAL = "LITERAL"
 python_Boot.keywords = set(["and", "del", "from", "not", "with", "as", "elif", "global", "or", "yield", "assert", "else", "if", "pass", "None", "break", "except", "import", "raise", "True", "class", "exec", "in", "return", "False", "continue", "finally", "is", "try", "def", "for", "lambda", "while"])
 python_Boot.prefixLength = len("_hx_")

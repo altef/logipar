@@ -11,24 +11,53 @@ class Token {
 	/**
 	 * @var string
 	 */
+	const AND = "AND";
+	/**
+	 * @var string
+	 */
+	const CLOSE = "CLOSE";
+	/**
+	 * @var string
+	 */
+	const LITERAL = "LITERAL";
+	/**
+	 * @var string
+	 */
+	const NOT = "NOT";
+	/**
+	 * @var string
+	 */
+	const OPEN = "OPEN";
+	/**
+	 * @var string
+	 */
+	const OR = "OR";
+	/**
+	 * @var string
+	 */
+	const XOR = "XOR";
+
+	/**
+	 * @var string
+	 */
 	public $literal;
 	/**
-	 * @var Syntax
+	 * @var string
 	 */
 	public $type;
 
 	/**
 	 * Instantiate!
 	 * 
-	 * @param Syntax $type
+	 * @param string $type
 	 * @param string $literal
 	 * 
 	 * @return void
 	 */
 	public function __construct ($type, $literal = null) {
-		#src/logipar/Token.hx:17: characters 3-19
+		#src/logipar/Token.hx:25: characters 3-19
 		$this->type = $type;
-		#src/logipar/Token.hx:18: characters 3-25
+		#src/logipar/Token.hx:26: characters 3-25
 		$this->literal = $literal;
 	}
 
@@ -38,16 +67,16 @@ class Token {
 	 * @return int
 	 */
 	public function precedence () {
-		#src/logipar/Token.hx:26: characters 10-14
-		$__hx__switch = ($this->type->index);
-		if ($__hx__switch === 0 || $__hx__switch === 3) {
-			#src/logipar/Token.hx:28: characters 5-13
+		#src/logipar/Token.hx:34: characters 10-14
+		$__hx__switch = ($this->type);
+		if ($__hx__switch === "AND" || $__hx__switch === "NOT") {
+			#src/logipar/Token.hx:36: characters 5-13
 			return 2;
-		} else if ($__hx__switch === 1 || $__hx__switch === 2) {
-			#src/logipar/Token.hx:30: characters 5-13
+		} else if ($__hx__switch === "OR" || $__hx__switch === "XOR") {
+			#src/logipar/Token.hx:38: characters 5-13
 			return 1;
 		} else {
-			#src/logipar/Token.hx:32: characters 5-13
+			#src/logipar/Token.hx:40: characters 5-13
 			return 0;
 		}
 	}
@@ -58,12 +87,12 @@ class Token {
 	 * @return string
 	 */
 	public function toString () {
-		#src/logipar/Token.hx:41: lines 41-42
-		if ($this->type === Syntax::LITERAL()) {
-			#src/logipar/Token.hx:42: characters 4-42
+		#src/logipar/Token.hx:49: lines 49-50
+		if ($this->type === "LITERAL") {
+			#src/logipar/Token.hx:50: characters 4-42
 			return "LITERAL(" . ($this->literal??'null') . ")";
 		}
-		#src/logipar/Token.hx:43: characters 3-31
+		#src/logipar/Token.hx:51: characters 3-31
 		return \Std::string($this->type);
 	}
 

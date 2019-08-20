@@ -40,9 +40,9 @@ class Node {
 		if (s != null)
 			return s;
 		switch(token.type) {
-			case Syntax.LITERAL:
+			case Token.LITERAL:
 				return "{" + token.literal + "}";
-			case Syntax.NOT:
+			case Token.NOT:
 				return "NOT(" + right.fancyString(f) + ")";
 			default:
 				return "(" + left.fancyString(f) + " " + Std.string(token.type) + " " + right.fancyString(f) + ")";
@@ -57,17 +57,17 @@ class Node {
 	 */
 	public function check(a:Dynamic, f:(row:Dynamic, value:String)->Bool):Bool {
 		switch(token.type) {
-			case Syntax.AND:
+			case Token.AND:
 				return left.check(a,f) && right.check(a,f);
-			case Syntax.OR:
+			case Token.OR:
 				return left.check(a,f) || right.check(a,f);
-			case Syntax.XOR:
+			case Token.XOR:
 				var l = left.check(a,f);
 				var r = right.check(a,f);
 				return (!l && r) || (l && !r);
-			case Syntax.NOT:
+			case Token.NOT:
 				return !right.check(a,f);
-			case Syntax.LITERAL: // Leaf
+			case Token.LITERAL: // Leaf
 				return f(a, token.literal);
 			default:
 				throw "Unexpected token encountered.";

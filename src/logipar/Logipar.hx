@@ -12,13 +12,13 @@ class Logipar {
 
 	public var quotations = ['"', "'"];  // You can add to the list of quotation symbols for the whitepsace toggling
 	public var caseSensitive:Bool = true;  // In case you don't want the operators to be case sensitive
-	private var syntax:Map<Syntax, String> = [  // Default syntax
-		AND => 'AND',
-		OR => 'OR',
-		XOR => 'XOR',
-		NOT => 'NOT',
-		OPEN => '(',
-		CLOSE => ')',
+	private var syntax:Map<String, String> = [  // Default syntax
+		Token.AND => 'AND',
+		Token.OR => 'OR',
+		Token.XOR => 'XOR',
+		Token.NOT => 'NOT',
+		Token.OPEN => '(',
+		Token.CLOSE => ')',
 	];
 
 	private var tree:Node;  // This is the internal representation of the tree.  It's null.
@@ -27,12 +27,12 @@ class Logipar {
 	/** 
 	 * You can define a custom syntax when you instantiate this.  There should be an example in the repo's readme.
 	 */
-	public function new(custom_syntax:Map<Syntax, String> = null):Void {
+	public function new(custom_operators:Map<String, String> = null):Void {
 		// Overwrite the default syntax map with any changes passed in
-		if (custom_syntax != null)
-			for(key in custom_syntax.keys())
+		if (custom_operators != null)
+			for(key in custom_operators.keys())
 				if (syntax.exists(key))
-					syntax.set(key, custom_syntax.get(key));
+					syntax.set(key, custom_operators.get(key));
 	}
 
 
@@ -78,6 +78,11 @@ class Logipar {
 	}
 
 
+	public function toString():String {
+		return stringify();
+	}
+
+
 	// This is a private function - what're you doing here?!
 	// JK. This converts a list of tokens into a tree.  It assumes it's already been through the shunter so it ignores order of operations.
 	private function treeify(tokens:Array<Token>):Node {
@@ -89,14 +94,14 @@ class Logipar {
 			
 			// If it's a literal, we can just add it.
 			// But if it's not, it should have a child - so let's link those up.
-			if (token.type != Syntax.LITERAL) { 
+			if (token.type != Token.LITERAL) { 
 				// They should ALL have a right-most child
 				if (stack.isEmpty())
 					throw "An '" + syntax.get(token.type) + "' is missing a value to operate on (on its right).";
 				n.right = stack.pop();
 				
 				// All the BINARY ones have a left-most child
-				if (token.type != Syntax.NOT) {
+				if (token.type != Token.NOT) {
 					if (stack.isEmpty())
 						throw "An '" + syntax.get(token.type) + "' is missing a value to operate on (on its left).";
 					n.left = stack.pop();
@@ -120,14 +125,14 @@ class Logipar {
 		for(i in 0...tokens.length) {
 			var token = tokens[i];
 			switch(token.type) {  // Do different things based on what type of token it is
-				case Syntax.LITERAL:  // If it's a literal, go directly to the output
+				case Token.LITERAL:  // If it's a literal, go directly to the output
 					output.push(token);
-				case Syntax.OPEN:  // If it's an open parenthesis, go directly to the operators
+				case Token.OPEN:  // If it's an open parenthesis, go directly to the operators
 					operators.add(token);
-				case Syntax.CLOSE:  // If it's a close parenthesis, pop things off the operators until it finds an open parentheses on there
+				case Token.CLOSE:  // If it's a close parenthesis, pop things off the operators until it finds an open parentheses on there
 					while(true) {
 						var op = operators.pop();
-						if (op.type == Syntax.OPEN) 
+						if (op.type == Token.OPEN) 
 							break;
 						if (operators.isEmpty())
 							throw "Mismatched parentheses.";
@@ -140,7 +145,7 @@ class Logipar {
 						
 						var prev = operators.first();
 						
-						if (prev.type == Syntax.OPEN) 
+						if (prev.type == Token.OPEN) 
 							break;
 						
 						if (prev.precedence() <= token.precedence()) 
@@ -156,7 +161,7 @@ class Logipar {
 		// Finish off any operators left in their stack
 		while(!operators.isEmpty()) {
 			var o = operators.pop();
-			if (o.type == Syntax.OPEN)
+			if (o.type == Token.OPEN)
 				throw "Mismatched parentheses.";
 			output.push(o);
 		}
@@ -219,7 +224,7 @@ class Logipar {
 				return new Token(key);
 		}
 		// Otherwise it's a literal, I guess!
-		return new Token(Syntax.LITERAL, token);
+		return new Token(Token.LITERAL, token);
 	}
 
 

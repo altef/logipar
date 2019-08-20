@@ -11,12 +11,12 @@ class Test extends buddy.SingleSuite {
 		
 			// Let's try changing the syntax
 			var l = new logipar.Logipar([
-				logipar.Syntax.AND => 'et',
-				logipar.Syntax.OR => 'ou',
-				logipar.Syntax.XOR => 'xou',
-				logipar.Syntax.NOT => 'non',
-				logipar.Syntax.OPEN => '[',
-				logipar.Syntax.CLOSE => ']'
+				logipar.Token.AND => 'et',
+				logipar.Token.OR => 'ou',
+				logipar.Token.XOR => 'xou',
+				logipar.Token.NOT => 'non',
+				logipar.Token.OPEN => '[',
+				logipar.Token.CLOSE => ']'
 			]);
 			
 		
@@ -91,10 +91,10 @@ class Test extends buddy.SingleSuite {
 				it("Testing: " + t[0], {
 					l.parse(t[0]);
 					l.stringify(function(n:logipar.Node):String {
-						if (n.token.type == logipar.Syntax.XOR) {
+						if (n.token.type == logipar.Token.XOR) {
 							return "((" + n.f(n.left) + " AND NOT " + n.f(n.right) + ") OR (NOT " + n.f(n.left) + " AND " + n.f(n.right) + "))";
 						}
-						if (n.token.type == logipar.Syntax.LITERAL) {
+						if (n.token.type == logipar.Token.LITERAL) {
 							return Std.string(n.token.literal);
 						}
 						return null;

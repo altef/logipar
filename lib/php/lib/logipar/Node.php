@@ -50,8 +50,8 @@ class Node {
 	 */
 	public function check ($a, $f) {
 		#src/logipar/Node.hx:59: characters 10-20
-		$__hx__switch = ($this->token->type->index);
-		if ($__hx__switch === 0) {
+		$__hx__switch = ($this->token->type);
+		if ($__hx__switch === "AND") {
 			#src/logipar/Node.hx:61: characters 12-47
 			if ($this->left->check($a, $f)) {
 				#src/logipar/Node.hx:61: characters 31-47
@@ -60,7 +60,13 @@ class Node {
 				#src/logipar/Node.hx:61: characters 12-47
 				return false;
 			}
-		} else if ($__hx__switch === 1) {
+		} else if ($__hx__switch === "LITERAL") {
+			#src/logipar/Node.hx:71: characters 5-31
+			return $f($a, $this->token->literal);
+		} else if ($__hx__switch === "NOT") {
+			#src/logipar/Node.hx:69: characters 5-29
+			return !$this->right->check($a, $f);
+		} else if ($__hx__switch === "OR") {
 			#src/logipar/Node.hx:63: characters 12-47
 			if (!$this->left->check($a, $f)) {
 				#src/logipar/Node.hx:63: characters 31-47
@@ -69,7 +75,7 @@ class Node {
 				#src/logipar/Node.hx:63: characters 12-47
 				return true;
 			}
-		} else if ($__hx__switch === 2) {
+		} else if ($__hx__switch === "XOR") {
 			#src/logipar/Node.hx:65: characters 5-29
 			$l = $this->left->check($a, $f);
 			#src/logipar/Node.hx:66: characters 5-30
@@ -88,12 +94,6 @@ class Node {
 				#src/logipar/Node.hx:67: characters 12-34
 				return true;
 			}
-		} else if ($__hx__switch === 3) {
-			#src/logipar/Node.hx:69: characters 5-29
-			return !$this->right->check($a, $f);
-		} else if ($__hx__switch === 6) {
-			#src/logipar/Node.hx:71: characters 5-31
-			return $f($a, $this->token->literal);
 		} else {
 			#src/logipar/Node.hx:73: characters 5-10
 			throw new HxException("Unexpected token encountered.");
@@ -127,13 +127,13 @@ class Node {
 			return $s;
 		}
 		#src/logipar/Node.hx:42: characters 10-20
-		$__hx__switch = ($this->token->type->index);
-		if ($__hx__switch === 3) {
-			#src/logipar/Node.hx:46: characters 5-47
-			return "NOT(" . ($this->right->fancyString($f)??'null') . ")";
-		} else if ($__hx__switch === 6) {
+		$__hx__switch = ($this->token->type);
+		if ($__hx__switch === "LITERAL") {
 			#src/logipar/Node.hx:44: characters 5-37
 			return "{" . ($this->token->literal??'null') . "}";
+		} else if ($__hx__switch === "NOT") {
+			#src/logipar/Node.hx:46: characters 5-47
+			return "NOT(" . ($this->right->fancyString($f)??'null') . ")";
 		} else {
 			#src/logipar/Node.hx:48: characters 5-103
 			return "(" . ($this->left->fancyString($f)??'null') . " " . (\Std::string($this->token->type)??'null') . " " . ($this->right->fancyString($f)??'null') . ")";
