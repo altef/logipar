@@ -2,6 +2,8 @@ package logipar;
 
 
 // This is a token.  That is all.  It represents a portion of the logic string.
+@:expose
+@:keep
 class Token {
 
 	public var type:Syntax;  // Which part of the syntax it represents

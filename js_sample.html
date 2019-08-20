@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Javascript sample</title>
+	<script src="http://code.jquery.com/jquery.js"></script>
+	<script src="lib/logipar.js"></script>
+	<script src="sample_data.js"></script>
+	<script>
+		function fancyFilter(row, value) {
+			value = value.replace('"', '')
+			if (!value.includes(":")) {
+				// This is a dumb one that just checks the values against every column
+				for(var field in row)
+					if (row[field].toString().toLowerCase().includes(value.toLowerCase()))
+						return true
+			} else {
+				// We're specifying a specific field we want to look in
+				chunks = value.split(':');
+				field = chunks.shift();
+				val = chunks.join(':')
+				if (row.hasOwnProperty(field))
+					if (row[field].toString().toLowerCase().includes(val.toLowerCase()))
+						return true
+			}
+			return false
+		}
+	
+	
+		function onFilter() {
+			var l = new logipar.Logipar();
+			l.caseSensitive = false;
+			l.parse(document.getElementById('filter').value);
+			console.log("Okay, it looks like you're looking for: ", l.stringify());
+			
+			f = l.filterFunction(fancyFilter)
+			data = sample_data.filter(f)
+			
+			var out = "";
+			if (data.length == 0)
+				out = "No matching entries found."
+			else {
+				out += "<table><thead><tr>";
+				for(var prop in data[0]) 
+					out += "<th>" + prop + "</th>";
+				out += "</tr></thead><tbody>";
+				for(var i=0; i < data.length; i++) {
+					out += "<tr>";
+					for(var prop in data[i]) 
+						out += "<td>" + data[i][prop] + "</td>";
+					
+					out += "</tr>";
+				}
+				out += "</tbody></table>";
+			}
+			document.getElementById('results').innerHTML = out;
+		}
+	</script>
+</head>
+<body>
+	<input type="text" placeholder="Logic string goes here" id="filter" />
+	<button onClick="onFilter()">Filter</button>
+	<div id="results">
+	
+	</div>
+</body>
+</html>

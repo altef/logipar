@@ -59,7 +59,7 @@ class Logipar {
 	 * Confused?  Don't worry, there should be an example on the repo's readme.
 	 */
 	public function stringify(f:(Node)->String = null):String {
-		return tree.fancyString(f);
+		return tree == null ? null : tree.fancyString(f);
 	}
 
 

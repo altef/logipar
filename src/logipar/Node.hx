@@ -1,6 +1,8 @@
 package logipar;
 
 // This is used to represent every node in the tree
+@:expose
+@:keep
 class Node {
 
 	public var token:Token;  // The token for this node
@@ -33,6 +35,7 @@ class Node {
 		if (f != null) {
 			this.f = f; // Store the function in the node
 			s = f(this);
+			this.f = null; // There it goes again
 		}
 		if (s != null)
 			return s;

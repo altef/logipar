@@ -241,8 +241,14 @@ class Logipar {
 	 * @return string
 	 */
 	public function stringify ($f = null) {
-		#src/logipar/Logipar.hx:62: characters 3-29
-		return $this->tree->fancyString($f);
+		#src/logipar/Logipar.hx:62: characters 10-51
+		if ($this->tree === null) {
+			#src/logipar/Logipar.hx:62: characters 25-29
+			return null;
+		} else {
+			#src/logipar/Logipar.hx:62: characters 32-51
+			return $this->tree->fancyString($f);
+		}
 	}
 
 	/**
