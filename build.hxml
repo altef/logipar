@@ -1,21 +1,11 @@
+
 libraries.hxml
 
---next 
 
---main Test 
---js tests/Test.js
-
---next
-
---main Test
---php tests/php
-
---next
-
---main Test
---python tests/Test.py
 
 --next 
+
 
 --main Test 
 --neko tests/Test.n
+-lib buddy

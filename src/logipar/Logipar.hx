@@ -27,11 +27,12 @@ class Logipar {
 	/** 
 	 * You can define a custom syntax when you instantiate this.  There should be an example in the repo's readme.
 	 */
-	public function new(custom_syntax:Map<Syntax, String>):Void {
+	public function new(custom_syntax:Map<Syntax, String> = null):Void {
 		// Overwrite the default syntax map with any changes passed in
-		for(key in custom_syntax.keys())
-			if (syntax.exists(key))
-				syntax.set(key, custom_syntax.get(key));
+		if (custom_syntax != null)
+			for(key in custom_syntax.keys())
+				if (syntax.exists(key))
+					syntax.set(key, custom_syntax.get(key));
 	}
 
 
@@ -57,7 +58,7 @@ class Logipar {
 	 * Anything you don't account for will use the default toString() function.
 	 * Confused?  Don't worry, there should be an example on the repo's readme.
 	 */
-	public function stringify(f:(Node)->String):String {
+	public function stringify(f:(Node)->String = null):String {
 		return tree.fancyString(f);
 	}
 

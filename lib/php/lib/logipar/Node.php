@@ -10,6 +10,10 @@ use \php\_Boot\HxException;
 
 class Node {
 	/**
+	 * @var \Closure
+	 */
+	public $f;
+	/**
 	 * @var Node
 	 */
 	public $left;
@@ -30,7 +34,7 @@ class Node {
 	 * @return void
 	 */
 	public function __construct ($token) {
-		#src/logipar/Node.hx:15: characters 3-21
+		#src/logipar/Node.hx:16: characters 3-21
 		$this->token = $token;
 	}
 
@@ -45,53 +49,53 @@ class Node {
 	 * @return bool
 	 */
 	public function check ($a, $f) {
-		#src/logipar/Node.hx:53: characters 10-20
+		#src/logipar/Node.hx:56: characters 10-20
 		$__hx__switch = ($this->token->type->index);
 		if ($__hx__switch === 0) {
-			#src/logipar/Node.hx:55: characters 12-47
+			#src/logipar/Node.hx:58: characters 12-47
 			if ($this->left->check($a, $f)) {
-				#src/logipar/Node.hx:55: characters 31-47
+				#src/logipar/Node.hx:58: characters 31-47
 				return $this->right->check($a, $f);
 			} else {
-				#src/logipar/Node.hx:55: characters 12-47
+				#src/logipar/Node.hx:58: characters 12-47
 				return false;
 			}
 		} else if ($__hx__switch === 1) {
-			#src/logipar/Node.hx:57: characters 12-47
+			#src/logipar/Node.hx:60: characters 12-47
 			if (!$this->left->check($a, $f)) {
-				#src/logipar/Node.hx:57: characters 31-47
+				#src/logipar/Node.hx:60: characters 31-47
 				return $this->right->check($a, $f);
 			} else {
-				#src/logipar/Node.hx:57: characters 12-47
+				#src/logipar/Node.hx:60: characters 12-47
 				return true;
 			}
 		} else if ($__hx__switch === 2) {
-			#src/logipar/Node.hx:59: characters 5-29
+			#src/logipar/Node.hx:62: characters 5-29
 			$l = $this->left->check($a, $f);
-			#src/logipar/Node.hx:60: characters 5-30
+			#src/logipar/Node.hx:63: characters 5-30
 			$r = $this->right->check($a, $f);
-			#src/logipar/Node.hx:61: characters 12-34
+			#src/logipar/Node.hx:64: characters 12-34
 			if (!(!$l && $r)) {
-				#src/logipar/Node.hx:61: characters 25-34
+				#src/logipar/Node.hx:64: characters 25-34
 				if ($l) {
-					#src/logipar/Node.hx:61: characters 31-33
+					#src/logipar/Node.hx:64: characters 31-33
 					return !$r;
 				} else {
-					#src/logipar/Node.hx:61: characters 25-34
+					#src/logipar/Node.hx:64: characters 25-34
 					return false;
 				}
 			} else {
-				#src/logipar/Node.hx:61: characters 12-34
+				#src/logipar/Node.hx:64: characters 12-34
 				return true;
 			}
 		} else if ($__hx__switch === 3) {
-			#src/logipar/Node.hx:63: characters 5-29
+			#src/logipar/Node.hx:66: characters 5-29
 			return !$this->right->check($a, $f);
 		} else if ($__hx__switch === 6) {
-			#src/logipar/Node.hx:65: characters 5-31
+			#src/logipar/Node.hx:68: characters 5-31
 			return $f($a, $this->token->literal);
 		} else {
-			#src/logipar/Node.hx:67: characters 5-10
+			#src/logipar/Node.hx:70: characters 5-10
 			throw new HxException("Unexpected token encountered.");
 		}
 	}
@@ -106,29 +110,31 @@ class Node {
 	 * @return string
 	 */
 	public function fancyString ($f = null) {
-		#src/logipar/Node.hx:31: characters 3-16
+		#src/logipar/Node.hx:32: characters 3-16
 		$s = null;
-		#src/logipar/Node.hx:32: lines 32-33
+		#src/logipar/Node.hx:33: lines 33-36
 		if ($f !== null) {
-			#src/logipar/Node.hx:33: characters 4-15
+			#src/logipar/Node.hx:34: characters 4-14
+			$this->f = $f;
+			#src/logipar/Node.hx:35: characters 4-15
 			$s = $f($this);
 		}
-		#src/logipar/Node.hx:34: lines 34-35
+		#src/logipar/Node.hx:37: lines 37-38
 		if ($s !== null) {
-			#src/logipar/Node.hx:35: characters 4-12
+			#src/logipar/Node.hx:38: characters 4-12
 			return $s;
 		}
-		#src/logipar/Node.hx:36: characters 10-20
+		#src/logipar/Node.hx:39: characters 10-20
 		$__hx__switch = ($this->token->type->index);
 		if ($__hx__switch === 3) {
-			#src/logipar/Node.hx:40: characters 5-32
-			return "NOT(" . (\Std::string($this->right)??'null') . ")";
+			#src/logipar/Node.hx:43: characters 5-47
+			return "NOT(" . ($this->right->fancyString($f)??'null') . ")";
 		} else if ($__hx__switch === 6) {
-			#src/logipar/Node.hx:38: characters 5-37
+			#src/logipar/Node.hx:41: characters 5-37
 			return "{" . ($this->token->literal??'null') . "}";
 		} else {
-			#src/logipar/Node.hx:42: characters 5-73
-			return "(" . (\Std::string($this->left)??'null') . " " . (\Std::string($this->token->type)??'null') . " " . (\Std::string($this->right)??'null') . ")";
+			#src/logipar/Node.hx:45: characters 5-103
+			return "(" . ($this->left->fancyString($f)??'null') . " " . (\Std::string($this->token->type)??'null') . " " . ($this->right->fancyString($f)??'null') . ")";
 		}
 	}
 
@@ -138,7 +144,7 @@ class Node {
 	 * @return string
 	 */
 	public function toString () {
-		#src/logipar/Node.hx:22: characters 38-58
+		#src/logipar/Node.hx:23: characters 38-58
 		return $this->fancyString();
 	}
 

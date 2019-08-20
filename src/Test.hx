@@ -1,73 +1,110 @@
 using StringTools;
-//import logipar.Syntax;
-//import logipar.Logipar;
+import buddy.*;
+using buddy.Should;
 
-class Test {
-	static public function main():Void {
-		
-		
-		var ls = new logipar.Logipar([
-			logipar.Syntax.AND => 'et',
-			logipar.Syntax.OR => 'ou',
-			logipar.Syntax.XOR => 'xou',
-			logipar.Syntax.NOT => 'non',
-			logipar.Syntax.OPEN => '[',
-			logipar.Syntax.CLOSE => ']'
-		]);
-		
-		var ts = '[one="1 et 0" et two] ou three et non[five]';
-		// ts = '[a ou b] et c ou non d';
-		// ts = 'non a ou b';
-		// ts = 'non a et b';
-		// ts = 'et b []';
-		//ts = 'a xou b';
-		//ts = '0 et 1 ou 2 ou 3 et 4'; // Is this one right?
-		ts = '[authors:"J." OU sea] xou guts';
-		//ts = 'authors:J';
-		ls.caseSensitive = false; // *** Implement this.  It's so our AND and OR etc can be any case
-		var obj:logipar.Node = ls.parse(ts);
-		trace(obj);
-		var s = ls.stringify(function(n:logipar.Node):String {
-			if (n.token.type == logipar.Syntax.XOR) {
-				return "((" + n.left + " AND NOT " + n.right + ") OR (NOT " + n.left + " AND " + n.right + "))";
-			}
-			return null;
-		});
-		trace(s);
-		
 
+class Test extends buddy.SingleSuite {
+	
+	public function new() {
 		
-		var f:(Dynamic)->Bool = ls.filterFunction(function(row:Dynamic, value:String):Bool {
-			value = value.replace('"', '');
-			if (value.indexOf(":") == -1) {
-				// This is a dumb one that just checks the values against every column
-				for (f in Reflect.fields(row)) {
-					if (Std.string(Reflect.field(row, f)).toLowerCase().indexOf(value.toLowerCase()) != -1)
-						return true;
-				}
-			} else {
-				// We're specifying a specific field we want to look in
-				var chunks = value.split(':');
-				var field = chunks.shift();
-				var val = chunks.join(':');
-				if (Reflect.hasField(row, field)) {
-					if (Std.string(Reflect.field(row, field)).toLowerCase().indexOf(val.toLowerCase()) != -1)
-						return true;
-				}
+		describe("Overwriting syntax", {
+		
+			// Let's try changing the syntax
+			var l = new logipar.Logipar([
+				logipar.Syntax.AND => 'et',
+				logipar.Syntax.OR => 'ou',
+				logipar.Syntax.XOR => 'xou',
+				logipar.Syntax.NOT => 'non',
+				logipar.Syntax.OPEN => '[',
+				logipar.Syntax.CLOSE => ']'
+			]);
+			
+		
+			var tests = [
+				["[one ou two] et three ou non four", "((({one} OR {two}) AND {three}) OR NOT({four}))"],
+			];
+			
+			for(t in tests) {
+				it("Testing: " + t[0], {
+					l.parse(t[0]);
+					l.stringify().should.be(t[1]);
+				});
 			}
-			return false;
 		});
 		
-		trace("Filtering sample data:");
-		var d:Array<Dynamic> = [];
-		for(i in 0...SampleData.data.length) {
-			if (f(SampleData.data[i]))
-				d.push(SampleData.data[i]);
-		}
+		describe("Testing quotation marks", {
+			var l = new logipar.Logipar();
+			l.quotations.push('`'); // Add a new fake quotation mark
+			var tests = [
+				['one=`hello there`', "{one=`hello there`}"],
+				['"one and two" OR \'three\'', '({"one and two"} OR {\'three\'})']
+			];
+			for(t in tests) {
+				it("Testing: " + t[0], {
+					l.parse(t[0]);
+					l.stringify().should.be(t[1]);
+				});
+			}
+		});
 		
-		for(book in d)
-			//trace(book);
-			trace(book.title + " by " + book.authors);
+		
+		describe("Testing case-insensitivity", {
+			var l = new logipar.Logipar();
+			l.caseSensitive = false;
+			var tests = [
+				['a and b or c', "(({a} AND {b}) OR {c})"],
+			];
+			for(t in tests) {
+				it("Testing: " + t[0], {
+					l.parse(t[0]);
+					l.stringify().should.be(t[1]);
+				});
+			}
+		});
+		
+
+		
+		describe("Other random logic tests", {
+			var l = new logipar.Logipar();
+			var tests = [
+				["NOT a OR b", "(NOT({a}) OR {b})"],
+				["NOT a AND b", "NOT(({a} AND {b}))"],
+				["a AND b XOR c AND d", "(({a} AND {b}) XOR ({c} AND {d}))"],
+			];
+			for(t in tests) {
+				it("Testing: " + t[0], {
+					l.parse(t[0]);
+					l.stringify().should.be(t[1]);
+				});
+			}
+		});
+		
+		
+		describe("Testing a custom string", {
+			var l = new logipar.Logipar();
+			var tests = [
+				["NOT a OR b", "(NOT(a) OR b)"],
+				["NOT a AND b", "NOT((a AND b))"],
+				["a XOR b", "((a AND NOT b) OR (NOT a AND b))"],
+			];
+			for(t in tests) {
+				it("Testing: " + t[0], {
+					l.parse(t[0]);
+					l.stringify(function(n:logipar.Node):String {
+						if (n.token.type == logipar.Syntax.XOR) {
+							return "((" + n.f(n.left) + " AND NOT " + n.f(n.right) + ") OR (NOT " + n.f(n.left) + " AND " + n.f(n.right) + "))";
+						}
+						if (n.token.type == logipar.Syntax.LITERAL) {
+							return Std.string(n.token.literal);
+						}
+						return null;
+					}).should.be(t[1]);
+				});
+			}
+
+		});
+		
+		// I should test the filterFunction stuff, but I'm too lazy atm...
 	}
 	
 }

@@ -7,6 +7,7 @@ class Node {
 	public var left:Node;  // Its left-child (presumably preceding operand)
 	public var right:Node;  // Its right-child (presumably succeeding operand)
 
+	public var f:(Node)->String; // This is so custom fancyString functions can call themselves recursively
 
 	/**
 	 * Construct a new node.  That is all.
@@ -29,17 +30,19 @@ class Node {
 	 */
 	public function fancyString(f:(Node)->String = null):String {
 		var s = null;
-		if (f != null)
+		if (f != null) {
+			this.f = f; // Store the function in the node
 			s = f(this);
+		}
 		if (s != null)
 			return s;
 		switch(token.type) {
 			case Syntax.LITERAL:
 				return "{" + token.literal + "}";
 			case Syntax.NOT:
-				return "NOT(" + right + ")";
+				return "NOT(" + right.fancyString(f) + ")";
 			default:
-				return "(" + left + " " + Std.string(token.type) + " " + right + ")";
+				return "(" + left.fancyString(f) + " " + Std.string(token.type) + " " + right.fancyString(f) + ")";
 		}
 	}
 

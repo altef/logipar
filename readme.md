@@ -40,6 +40,7 @@ Hopefully you'll be able to use your favourite package manager to install it.  I
 * `yarn add logipar`
 * `npn install logipar`
 * `composer install logipar`
+* `haxelib install logipar`
 * ???
 
 But for now none of that works! You'll have to manually download the library for your language if you want to use it.  *Ugh.*
