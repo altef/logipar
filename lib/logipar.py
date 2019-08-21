@@ -144,7 +144,7 @@ class logipar_Logipar:
     _hx_fields = ["quotations", "caseSensitive", "syntax", "tree"]
     _hx_methods = ["parse", "stringify", "filterFunction", "toString", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
 
-    def __init__(self,custom_operators = None):
+    def __init__(self):
         self.tree = None
         _g = haxe_ds_StringMap()
         _g.h["AND"] = "AND"
@@ -156,14 +156,6 @@ class logipar_Logipar:
         self.syntax = _g
         self.caseSensitive = True
         self.quotations = ["\"", "'"]
-        if (custom_operators is not None):
-            key = custom_operators.keys()
-            while key.hasNext():
-                key1 = key.next()
-                if (key1 in self.syntax.h):
-                    this1 = self.syntax
-                    value = custom_operators.h.get(key1,None)
-                    this1.h[key1] = value
 
     def parse(self,logic_string):
         tokens = self.tokenize(logic_string)

@@ -10,16 +10,14 @@ class Test extends buddy.SingleSuite {
 		describe("Overwriting syntax", {
 		
 			// Let's try changing the syntax
-			var l = new logipar.Logipar([
-				logipar.Token.AND => 'et',
-				logipar.Token.OR => 'ou',
-				logipar.Token.XOR => 'xou',
-				logipar.Token.NOT => 'non',
-				logipar.Token.OPEN => '[',
-				logipar.Token.CLOSE => ']'
-			]);
+			var l = new logipar.Logipar();
+			l.syntax.set(logipar.Token.AND, 'et');
+			l.syntax.set(logipar.Token.OR, 'ou');
+			l.syntax.set(logipar.Token.XOR, 'xou');
+			l.syntax.set(logipar.Token.NOT, 'non');
+			l.syntax.set(logipar.Token.OPEN, '[');
+			l.syntax.set(logipar.Token.CLOSE, ']');
 			
-		
 			var tests = [
 				["[one ou two] et three ou non four", "((({one} OR {two}) AND {three}) OR NOT({four}))"],
 			];

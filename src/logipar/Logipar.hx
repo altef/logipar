@@ -12,7 +12,7 @@ class Logipar {
 
 	public var quotations = ['"', "'"];  // You can add to the list of quotation symbols for the whitepsace toggling
 	public var caseSensitive:Bool = true;  // In case you don't want the operators to be case sensitive
-	private var syntax:Map<String, String> = [  // Default syntax
+	public var syntax:Map<String, String> = [  // Default syntax.  This is public so you can overwrite it if necessary.
 		Token.AND => 'AND',
 		Token.OR => 'OR',
 		Token.XOR => 'XOR',
@@ -24,17 +24,7 @@ class Logipar {
 	private var tree:Node;  // This is the internal representation of the tree.  It's null.
 
 
-	/** 
-	 * You can define a custom syntax when you instantiate this.  There should be an example in the repo's readme.
-	 */
-	public function new(custom_operators:Map<String, String> = null):Void {
-		// Overwrite the default syntax map with any changes passed in
-		if (custom_operators != null)
-			for(key in custom_operators.keys())
-				if (syntax.exists(key))
-					syntax.set(key, custom_operators.get(key));
-	}
-
+	public function new() {}
 
 	/**
 	 * Parse the logic string!  It returns a logipar.Node (the root of the tree), but you can pretty much ignore this.  

@@ -31,13 +31,9 @@ class Logipar {
 	public $tree;
 
 	/**
-	 * You can define a custom syntax when you instantiate this.  There should be an example in the repo's readme.
-	 * 
-	 * @param StringMap $custom_operators
-	 * 
 	 * @return void
 	 */
-	public function __construct ($custom_operators = null) {
+	public function __construct () {
 		#src/logipar/Logipar.hx:15: lines 15-22
 		$_g = new StringMap();
 		$_g->data["AND"] = "AND";
@@ -54,22 +50,6 @@ class Logipar {
 			"\"",
 			"'",
 		]);
-		#src/logipar/Logipar.hx:32: lines 32-35
-		if ($custom_operators !== null) {
-			#src/logipar/Logipar.hx:33: characters 15-38
-			$key = new NativeIndexedArrayIterator(array_values(array_map("strval", array_keys($custom_operators->data))));
-			while ($key->hasNext()) {
-				#src/logipar/Logipar.hx:33: lines 33-35
-				$key1 = $key->next();
-				#src/logipar/Logipar.hx:34: lines 34-35
-				if (array_key_exists($key1, $this->syntax->data)) {
-					#src/logipar/Logipar.hx:35: characters 6-48
-					$this1 = $this->syntax;
-					$value = ($custom_operators->data[$key1] ?? null);
-					$this1->data[$key1] = $value;
-				}
-			}
-		}
 	}
 
 	/**
@@ -84,11 +64,11 @@ class Logipar {
 	 * @return \Closure
 	 */
 	public function filterFunction ($f) {
-		#src/logipar/Logipar.hx:74: characters 3-23
+		#src/logipar/Logipar.hx:64: characters 3-23
 		$enclosed = $this->tree;
-		#src/logipar/Logipar.hx:75: lines 75-77
+		#src/logipar/Logipar.hx:65: lines 65-67
 		return function ($a)  use (&$f, &$enclosed) {
-			#src/logipar/Logipar.hx:76: characters 4-31
+			#src/logipar/Logipar.hx:66: characters 4-31
 			return $enclosed->check($a, $f);
 		};
 	}
@@ -102,15 +82,15 @@ class Logipar {
 	 * @return Node
 	 */
 	public function parse ($logic_string) {
-		#src/logipar/Logipar.hx:44: characters 3-39
+		#src/logipar/Logipar.hx:34: characters 3-39
 		$tokens = $this->tokenize($logic_string);
-		#src/logipar/Logipar.hx:45: characters 3-31
+		#src/logipar/Logipar.hx:35: characters 3-31
 		$types = $this->typeize($tokens);
-		#src/logipar/Logipar.hx:46: characters 3-36
+		#src/logipar/Logipar.hx:36: characters 3-36
 		$reversepolish = $this->shunt($types);
-		#src/logipar/Logipar.hx:47: characters 3-32
+		#src/logipar/Logipar.hx:37: characters 3-32
 		$this->tree = $this->treeify($reversepolish);
-		#src/logipar/Logipar.hx:48: characters 3-14
+		#src/logipar/Logipar.hx:38: characters 3-14
 		return $this->tree;
 	}
 
@@ -120,23 +100,23 @@ class Logipar {
 	 * @return \Array_hx
 	 */
 	public function shunt ($tokens) {
-		#src/logipar/Logipar.hx:123: characters 3-48
+		#src/logipar/Logipar.hx:113: characters 3-48
 		$output = new \Array_hx();
-		#src/logipar/Logipar.hx:124: characters 3-65
+		#src/logipar/Logipar.hx:114: characters 3-65
 		$operators = new GenericStack();
-		#src/logipar/Logipar.hx:125: lines 125-159
+		#src/logipar/Logipar.hx:115: lines 115-149
 		$_g = 0;
 		$_g1 = $tokens->length;
 		while ($_g < $_g1) {
 			$i = $_g++;
-			#src/logipar/Logipar.hx:126: characters 4-26
+			#src/logipar/Logipar.hx:116: characters 4-26
 			$token = ($tokens->arr[$i] ?? null);
-			#src/logipar/Logipar.hx:127: characters 11-21
+			#src/logipar/Logipar.hx:117: characters 11-21
 			$__hx__switch = ($token->type);
 			if ($__hx__switch === "CLOSE") {
-				#src/logipar/Logipar.hx:133: lines 133-140
+				#src/logipar/Logipar.hx:123: lines 123-130
 				while (true) {
-					#src/logipar/Logipar.hx:134: characters 16-31
+					#src/logipar/Logipar.hx:124: characters 16-31
 					$k = $operators->head;
 					$op = null;
 					if ($k === null) {
@@ -145,46 +125,46 @@ class Logipar {
 						$operators->head = $k->next;
 						$op = $k->elt;
 					}
-					#src/logipar/Logipar.hx:134: characters 7-32
+					#src/logipar/Logipar.hx:124: characters 7-32
 					$op1 = $op;
-					#src/logipar/Logipar.hx:135: lines 135-136
+					#src/logipar/Logipar.hx:125: lines 125-126
 					if ($op1->type === "OPEN") {
-						#src/logipar/Logipar.hx:136: characters 8-13
+						#src/logipar/Logipar.hx:126: characters 8-13
 						break;
 					}
-					#src/logipar/Logipar.hx:137: lines 137-138
+					#src/logipar/Logipar.hx:127: lines 127-128
 					if ($operators->head === null) {
-						#src/logipar/Logipar.hx:138: characters 8-13
+						#src/logipar/Logipar.hx:128: characters 8-13
 						throw new HxException("Mismatched parentheses.");
 					}
-					#src/logipar/Logipar.hx:139: characters 7-22
+					#src/logipar/Logipar.hx:129: characters 7-22
 					$output->arr[$output->length] = $op1;
 					++$output->length;
 
 				}
 			} else if ($__hx__switch === "LITERAL") {
-				#src/logipar/Logipar.hx:129: characters 6-24
+				#src/logipar/Logipar.hx:119: characters 6-24
 				$output->arr[$output->length] = $token;
 				++$output->length;
 			} else if ($__hx__switch === "OPEN") {
-				#src/logipar/Logipar.hx:131: characters 6-26
+				#src/logipar/Logipar.hx:121: characters 6-26
 				$operators->head = new GenericCell($token, $operators->head);
 			} else {
-				#src/logipar/Logipar.hx:142: lines 142-155
+				#src/logipar/Logipar.hx:132: lines 132-145
 				while ($operators->head !== null) {
-					#src/logipar/Logipar.hx:146: characters 7-36
+					#src/logipar/Logipar.hx:136: characters 7-36
 					$prev = ($operators->head === null ? null : $operators->head->elt);
-					#src/logipar/Logipar.hx:148: lines 148-149
+					#src/logipar/Logipar.hx:138: lines 138-139
 					if ($prev->type === "OPEN") {
-						#src/logipar/Logipar.hx:149: characters 8-13
+						#src/logipar/Logipar.hx:139: characters 8-13
 						break;
 					}
-					#src/logipar/Logipar.hx:151: lines 151-152
+					#src/logipar/Logipar.hx:141: lines 141-142
 					if ($prev->precedence() <= $token->precedence()) {
-						#src/logipar/Logipar.hx:152: characters 8-13
+						#src/logipar/Logipar.hx:142: characters 8-13
 						break;
 					}
-					#src/logipar/Logipar.hx:154: characters 19-34
+					#src/logipar/Logipar.hx:144: characters 19-34
 					$k1 = $operators->head;
 					$x = null;
 					if ($k1 === null) {
@@ -193,19 +173,19 @@ class Logipar {
 						$operators->head = $k1->next;
 						$x = $k1->elt;
 					}
-					#src/logipar/Logipar.hx:154: characters 7-35
+					#src/logipar/Logipar.hx:144: characters 7-35
 					$output->arr[$output->length] = $x;
 					++$output->length;
 
 				}
-				#src/logipar/Logipar.hx:156: characters 6-26
+				#src/logipar/Logipar.hx:146: characters 6-26
 				$operators->head = new GenericCell($token, $operators->head);
 			}
 		}
 
-		#src/logipar/Logipar.hx:162: lines 162-167
+		#src/logipar/Logipar.hx:152: lines 152-157
 		while ($operators->head !== null) {
-			#src/logipar/Logipar.hx:163: characters 12-27
+			#src/logipar/Logipar.hx:153: characters 12-27
 			$k2 = $operators->head;
 			$o = null;
 			if ($k2 === null) {
@@ -214,19 +194,19 @@ class Logipar {
 				$operators->head = $k2->next;
 				$o = $k2->elt;
 			}
-			#src/logipar/Logipar.hx:163: characters 4-28
+			#src/logipar/Logipar.hx:153: characters 4-28
 			$o1 = $o;
-			#src/logipar/Logipar.hx:164: lines 164-165
+			#src/logipar/Logipar.hx:154: lines 154-155
 			if ($o1->type === "OPEN") {
-				#src/logipar/Logipar.hx:165: characters 5-10
+				#src/logipar/Logipar.hx:155: characters 5-10
 				throw new HxException("Mismatched parentheses.");
 			}
-			#src/logipar/Logipar.hx:166: characters 4-18
+			#src/logipar/Logipar.hx:156: characters 4-18
 			$output->arr[$output->length] = $o1;
 			++$output->length;
 
 		}
-		#src/logipar/Logipar.hx:168: characters 3-16
+		#src/logipar/Logipar.hx:158: characters 3-16
 		return $output;
 	}
 
@@ -244,12 +224,12 @@ class Logipar {
 	 * @return string
 	 */
 	public function stringify ($f = null) {
-		#src/logipar/Logipar.hx:62: characters 10-51
+		#src/logipar/Logipar.hx:52: characters 10-51
 		if ($this->tree === null) {
-			#src/logipar/Logipar.hx:62: characters 25-29
+			#src/logipar/Logipar.hx:52: characters 25-29
 			return null;
 		} else {
-			#src/logipar/Logipar.hx:62: characters 32-51
+			#src/logipar/Logipar.hx:52: characters 32-51
 			return $this->tree->fancyString($f);
 		}
 	}
@@ -260,12 +240,12 @@ class Logipar {
 	 * @return string
 	 */
 	public function tentativelyLower ($s) {
-		#src/logipar/Logipar.hx:174: characters 10-57
+		#src/logipar/Logipar.hx:164: characters 10-57
 		if ($this->caseSensitive) {
-			#src/logipar/Logipar.hx:174: characters 26-27
+			#src/logipar/Logipar.hx:164: characters 26-27
 			return $s;
 		} else {
-			#src/logipar/Logipar.hx:174: characters 30-57
+			#src/logipar/Logipar.hx:164: characters 30-57
 			return mb_strtolower(\Std::string($s));
 		}
 	}
@@ -274,7 +254,7 @@ class Logipar {
 	 * @return string
 	 */
 	public function toString () {
-		#src/logipar/Logipar.hx:82: characters 3-21
+		#src/logipar/Logipar.hx:72: characters 3-21
 		return $this->stringify();
 	}
 
@@ -284,19 +264,19 @@ class Logipar {
 	 * @return Token
 	 */
 	public function tokenType ($token) {
-		#src/logipar/Logipar.hx:222: characters 14-27
+		#src/logipar/Logipar.hx:212: characters 14-27
 		$key = new NativeIndexedArrayIterator(array_values(array_map("strval", array_keys($this->syntax->data))));
 		while ($key->hasNext()) {
-			#src/logipar/Logipar.hx:222: lines 222-225
+			#src/logipar/Logipar.hx:212: lines 212-215
 			$key1 = $key->next();
-			#src/logipar/Logipar.hx:223: lines 223-224
+			#src/logipar/Logipar.hx:213: lines 213-214
 			if ($this->tentativelyLower($token) === $this->tentativelyLower(($this->syntax->data[$key1] ?? null))) {
-				#src/logipar/Logipar.hx:224: characters 5-26
+				#src/logipar/Logipar.hx:214: characters 5-26
 				return new Token($key1);
 			}
 		}
 
-		#src/logipar/Logipar.hx:227: characters 3-41
+		#src/logipar/Logipar.hx:217: characters 3-41
 		return new Token("LITERAL", $token);
 	}
 
@@ -306,85 +286,85 @@ class Logipar {
 	 * @return \Array_hx
 	 */
 	public function tokenize ($str) {
-		#src/logipar/Logipar.hx:182: characters 3-33
+		#src/logipar/Logipar.hx:172: characters 3-33
 		$tokens = new \Array_hx();
-		#src/logipar/Logipar.hx:183: characters 28-66
+		#src/logipar/Logipar.hx:173: characters 28-66
 		$_g = new \Array_hx();
-		#src/logipar/Logipar.hx:183: characters 38-44
+		#src/logipar/Logipar.hx:173: characters 38-44
 		$x = new NativeIndexedArrayIterator(array_values($this->syntax->data));
 		while ($x->hasNext()) {
-			#src/logipar/Logipar.hx:183: characters 29-65
+			#src/logipar/Logipar.hx:173: characters 29-65
 			$x1 = $x->next();
-			#src/logipar/Logipar.hx:183: characters 46-65
+			#src/logipar/Logipar.hx:173: characters 46-65
 			$x2 = $this->tentativelyLower($x1);
 			$_g->arr[$_g->length] = $x2;
 			++$_g->length;
 		}
 
-		#src/logipar/Logipar.hx:183: characters 3-67
+		#src/logipar/Logipar.hx:173: characters 3-67
 		$keys = $_g;
-		#src/logipar/Logipar.hx:184: characters 3-31
+		#src/logipar/Logipar.hx:174: characters 3-31
 		$quotation = null;
-		#src/logipar/Logipar.hx:186: characters 3-27
+		#src/logipar/Logipar.hx:176: characters 3-27
 		$current = "";
-		#src/logipar/Logipar.hx:187: lines 187-213
+		#src/logipar/Logipar.hx:177: lines 177-203
 		$_g1 = 0;
 		$_g2 = mb_strlen($str);
 		while ($_g1 < $_g2) {
 			$i = $_g1++;
-			#src/logipar/Logipar.hx:188: characters 4-26
+			#src/logipar/Logipar.hx:178: characters 4-26
 			$c = ($i < 0 ? "" : mb_substr($str, $i, 1));
-			#src/logipar/Logipar.hx:189: lines 189-212
+			#src/logipar/Logipar.hx:179: lines 179-202
 			if ($keys->indexOf($this->tentativelyLower($c)) === -1) {
-				#src/logipar/Logipar.hx:192: lines 192-198
+				#src/logipar/Logipar.hx:182: lines 182-188
 				if ($this->quotations->indexOf($c) !== -1) {
-					#src/logipar/Logipar.hx:193: lines 193-197
+					#src/logipar/Logipar.hx:183: lines 183-187
 					if ($quotation === null) {
-						#src/logipar/Logipar.hx:194: characters 7-20
+						#src/logipar/Logipar.hx:184: characters 7-20
 						$quotation = $c;
 					} else if ($quotation === $c) {
-						#src/logipar/Logipar.hx:196: characters 7-23
+						#src/logipar/Logipar.hx:186: characters 7-23
 						$quotation = null;
 					}
 				}
-				#src/logipar/Logipar.hx:200: lines 200-205
+				#src/logipar/Logipar.hx:190: lines 190-195
 				if (\StringTools::isSpace($c, 0) && ($quotation === null)) {
-					#src/logipar/Logipar.hx:201: lines 201-202
+					#src/logipar/Logipar.hx:191: lines 191-192
 					if (mb_strlen($current) > 0) {
-						#src/logipar/Logipar.hx:202: characters 7-27
+						#src/logipar/Logipar.hx:192: characters 7-27
 						$tokens->arr[$tokens->length] = $current;
 						++$tokens->length;
 					}
-					#src/logipar/Logipar.hx:203: characters 6-18
+					#src/logipar/Logipar.hx:193: characters 6-18
 					$current = "";
 				} else {
-					#src/logipar/Logipar.hx:205: characters 6-18
+					#src/logipar/Logipar.hx:195: characters 6-18
 					$current = ($current??'null') . ($c??'null');
 				}
 			} else {
-				#src/logipar/Logipar.hx:207: lines 207-209
+				#src/logipar/Logipar.hx:197: lines 197-199
 				if (mb_strlen($current) > 0) {
-					#src/logipar/Logipar.hx:208: characters 6-26
+					#src/logipar/Logipar.hx:198: characters 6-26
 					$tokens->arr[$tokens->length] = $current;
 					++$tokens->length;
 				}
-				#src/logipar/Logipar.hx:210: characters 5-17
+				#src/logipar/Logipar.hx:200: characters 5-17
 				$current = "";
-				#src/logipar/Logipar.hx:211: characters 5-19
+				#src/logipar/Logipar.hx:201: characters 5-19
 				$tokens->arr[$tokens->length] = $c;
 				++$tokens->length;
 
 			}
 		}
 
-		#src/logipar/Logipar.hx:214: lines 214-215
+		#src/logipar/Logipar.hx:204: lines 204-205
 		if (mb_strlen(trim($current)) > 0) {
-			#src/logipar/Logipar.hx:215: characters 4-31
+			#src/logipar/Logipar.hx:205: characters 4-31
 			$x3 = trim($current);
 			$tokens->arr[$tokens->length] = $x3;
 			++$tokens->length;
 		}
-		#src/logipar/Logipar.hx:216: characters 3-16
+		#src/logipar/Logipar.hx:206: characters 3-16
 		return $tokens;
 	}
 
@@ -394,25 +374,25 @@ class Logipar {
 	 * @return Node
 	 */
 	public function treeify ($tokens) {
-		#src/logipar/Logipar.hx:89: characters 3-59
+		#src/logipar/Logipar.hx:79: characters 3-59
 		$stack = new GenericStack();
-		#src/logipar/Logipar.hx:90: lines 90-111
+		#src/logipar/Logipar.hx:80: lines 80-101
 		$_g = 0;
 		$_g1 = $tokens->length;
 		while ($_g < $_g1) {
 			$i = $_g++;
-			#src/logipar/Logipar.hx:91: characters 4-26
+			#src/logipar/Logipar.hx:81: characters 4-26
 			$token = ($tokens->arr[$i] ?? null);
-			#src/logipar/Logipar.hx:92: characters 4-28
+			#src/logipar/Logipar.hx:82: characters 4-28
 			$n = new Node($token);
-			#src/logipar/Logipar.hx:97: lines 97-109
+			#src/logipar/Logipar.hx:87: lines 87-99
 			if ($token->type !== "LITERAL") {
-				#src/logipar/Logipar.hx:99: lines 99-100
+				#src/logipar/Logipar.hx:89: lines 89-90
 				if ($stack->head === null) {
-					#src/logipar/Logipar.hx:100: characters 6-11
+					#src/logipar/Logipar.hx:90: characters 6-11
 					throw new HxException("An '" . (($this->syntax->data[$token->type] ?? null)??'null') . "' is missing a value to operate on (on its right).");
 				}
-				#src/logipar/Logipar.hx:101: characters 15-26
+				#src/logipar/Logipar.hx:91: characters 15-26
 				$k = $stack->head;
 				$tmp = null;
 				if ($k === null) {
@@ -421,16 +401,16 @@ class Logipar {
 					$stack->head = $k->next;
 					$tmp = $k->elt;
 				}
-				#src/logipar/Logipar.hx:101: characters 5-26
+				#src/logipar/Logipar.hx:91: characters 5-26
 				$n->right = $tmp;
-				#src/logipar/Logipar.hx:104: lines 104-108
+				#src/logipar/Logipar.hx:94: lines 94-98
 				if ($token->type !== "NOT") {
-					#src/logipar/Logipar.hx:105: lines 105-106
+					#src/logipar/Logipar.hx:95: lines 95-96
 					if ($stack->head === null) {
-						#src/logipar/Logipar.hx:106: characters 7-12
+						#src/logipar/Logipar.hx:96: characters 7-12
 						throw new HxException("An '" . (($this->syntax->data[$token->type] ?? null)??'null') . "' is missing a value to operate on (on its left).");
 					}
-					#src/logipar/Logipar.hx:107: characters 15-26
+					#src/logipar/Logipar.hx:97: characters 15-26
 					$k1 = $stack->head;
 					$tmp1 = null;
 					if ($k1 === null) {
@@ -439,15 +419,15 @@ class Logipar {
 						$stack->head = $k1->next;
 						$tmp1 = $k1->elt;
 					}
-					#src/logipar/Logipar.hx:107: characters 6-26
+					#src/logipar/Logipar.hx:97: characters 6-26
 					$n->left = $tmp1;
 				}
 			}
-			#src/logipar/Logipar.hx:110: characters 4-16
+			#src/logipar/Logipar.hx:100: characters 4-16
 			$stack->head = new GenericCell($n, $stack->head);
 		}
 
-		#src/logipar/Logipar.hx:112: characters 19-30
+		#src/logipar/Logipar.hx:102: characters 19-30
 		$k2 = $stack->head;
 		$parsetree = null;
 		if ($k2 === null) {
@@ -456,14 +436,14 @@ class Logipar {
 			$stack->head = $k2->next;
 			$parsetree = $k2->elt;
 		}
-		#src/logipar/Logipar.hx:112: characters 3-31
+		#src/logipar/Logipar.hx:102: characters 3-31
 		$parsetree1 = $parsetree;
-		#src/logipar/Logipar.hx:113: lines 113-114
+		#src/logipar/Logipar.hx:103: lines 103-104
 		if ($stack->head !== null) {
-			#src/logipar/Logipar.hx:114: characters 4-9
+			#src/logipar/Logipar.hx:104: characters 4-9
 			throw new HxException("Uhoh, the stack isn't empty.  Do you have neighbouring literals?");
 		}
-		#src/logipar/Logipar.hx:116: characters 3-19
+		#src/logipar/Logipar.hx:106: characters 3-19
 		return $parsetree1;
 	}
 
@@ -473,21 +453,21 @@ class Logipar {
 	 * @return \Array_hx
 	 */
 	public function typeize ($tokens) {
-		#src/logipar/Logipar.hx:233: characters 10-65
+		#src/logipar/Logipar.hx:223: characters 10-65
 		$_g = new \Array_hx();
-		#src/logipar/Logipar.hx:233: characters 11-64
+		#src/logipar/Logipar.hx:223: characters 11-64
 		$_g1 = 0;
 		$_g2 = $tokens->length;
 		while ($_g1 < $_g2) {
 			$i = $_g1++;
-			#src/logipar/Logipar.hx:233: characters 39-64
+			#src/logipar/Logipar.hx:223: characters 39-64
 			$x = $this->tokenType(($tokens->arr[$i] ?? null));
 			$_g->arr[$_g->length] = $x;
 			++$_g->length;
 
 		}
 
-		#src/logipar/Logipar.hx:233: characters 10-65
+		#src/logipar/Logipar.hx:223: characters 10-65
 		return $_g;
 	}
 
