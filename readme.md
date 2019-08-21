@@ -1,6 +1,8 @@
 # Logipar
 /lɑːdʒɪpɜːr/
-*noun*:. *Your go-to polyglot **logic string parser**.*
+
+*noun*: Your go-to polyglot **logic string parser**.
+
 *verb*: parse that logic string, my friend.
  
 
