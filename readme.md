@@ -22,7 +22,7 @@ A more complex example: `title=Cat XOR "title contains dog"`.  **Logipar** doesn
 
 # What can I do with it once it's parsed?
 
-Oh, man, whatever you want really!  You can test objects against the parse tree (using **Logipar**'s `filterFunction()` function - [***see the filtering section]()).  You can flatten the parse tree to a string of your design (with the help of **Logipar**'s `stringify()` function - [***see the stringing section]()).  I guess.. I guess that's really all.  But come on, what more do you even want??
+Oh, man, whatever you want really!  You can test objects against the parse tree (using **Logipar**'s `filterFunction()` function - [see the filtering section](#filtering-data)).  You can flatten the parse tree to a string of your design (with the help of **Logipar**'s `stringify()` function - [see the stringing section](#stringification)).  I guess.. I guess that's really all.  But come on, what more do you even want??
 
 
 # Okay cool, can I use it though?
@@ -45,7 +45,7 @@ Bad news.  Hopefully soon you'll be able to use your favourite package manager t
 Great question!  Here are some examples in different languages. 
 ## Usage
 ##### Javascript
-You can include [Logipar.js](js/Logipar.js) in your code, or *** or however you get packages in.
+You can include [Logipar.js](js/Logipar.js) in your code.
 ```html
 <script src="Logipar.js"></script>
 ```
@@ -196,14 +196,98 @@ $flattened = $lp->stringify(function($n) {
 ```
 
 ## Filtering data
+Sometimes you just want to filter an array of rows. Nothing more, nothing less.  Well, maybe more.  Maybe you want to do it based on _a logic string_. 
+**Logipar**'s `filterFunction` can help.  It creates a function you can use to filter your data.  But how does it work?  Well, let's take a look at this example in Haxe:
+
+```haxe
+var myfilter:(Dynamic)->Bool = ls.filterFunction(function(row:Dynamic, value:String):Bool {
+	// This is  just checks the values against every column, in a case-insensitive way.  You can get as complex as you'd like.
+	// You can parse the value variable, etc.
+	for (f in Reflect.fields(row)) {
+		if (Std.string(Reflect.field(row, f)).toLowerCase().indexOf(value.toLowerCase()) != -1)
+			return true;
+	}
+	return false;
+});
+```
+Okay, so you can see above that **Logipar**'s `filterFunction()` takes a function as its argument, and returns a function.  The first function we supply, the second we use to do our filtering.
+The function we pass in takes an `row` of data.  This is probably an object of some sort, but that's your journey.  For the sake of our example, let's say it's `{title: "Harry potter", "author": "J.K. Rowling"}`.
+It also takes a string `value`.
+The task of this function is to take `value` and see if it matches `row`.  You can do this however you want.  This function is then run on every `LITERAL` (the leaves of the logic tree), and we use its results to decide if the logic tree resolves to `true` or `false` for `row`.
+
+The function that's returned you  can use on your data. For example, `myfilter(data[i])` will return `true` or `false` depending on if it matches the logic of the query.
+
+That's still pretty confusing.  Hopefully an example will clear it up.
+
+
+
+
 ##### Javascript
 ```javascript
+function fancyFilter(row, value) {
+	// This is  just checks the values against every column, in a case-insensitive way
+	for(var field in row)
+		if (row[field].toString().toLowerCase().includes(value.toLowerCase()))
+			return true;
+}
+f = lp.filterFunction(fancyFilter);
+filtered_data = sample_data.filter(f);    // Javascript arrays have a filter function
 ```
 ##### Python
 ```python
+def fancyFilter(row, value):
+	# This is  just checks the values against every column, in a case-insensitive way
+	for field in row:
+		if value.lower() in str(row[field]).lower():
+			return True
+	return False
+
+f = lp.filterFunction(fancyFilter)
+data = list(filter(f, data)) # Python has a filter function too
 ```
 ##### Php
 ```php
+$fancyFilter = function($row, $value) {
+	foreach($row as $field=>$v)
+		if (stripos($row[$field], $value) !== false)
+			return true;
+	return false;
+};
+
+$f = $lp->filterFunction($fancyFilter);
+$data = array_filter($data, $f);    // Oh look, so does PHP
 ```
+
+Now, let's try a more complex example in Haxe:
+
+```Haxe
+var f = ls.filterFunction(function(row:Dynamic, value:String):Bool {
+	value = value.replace('"', ''); // Strip out the quotation marks
+	if (value.indexOf(":") == -1) { // If there's no colon, just check if the value exists in any field
+		for (f in Reflect.fields(row)) {
+			if (Std.string(Reflect.field(row, f)).toLowerCase().indexOf(value.toLowerCase()) != -1)
+				return true;
+		}
+	} else {
+		// There was a colon.  Let's split it into field:value.
+		var chunks = value.split(':');
+		var field = chunks.shift(); // The field is before the first colon
+		var val = chunks.join(':'); // Any subsequent colons should be part of the value we look for
+		if (Reflect.hasField(row, field)) { // If that field exists, check if the value is in it
+			if (Std.string(Reflect.field(row, field)).toLowerCase().indexOf(val.toLowerCase()) != -1)
+				return true;
+		}
+	}
+	return false;
+});
+```
+
+What this function does is it allows for values in the format `column:value` and then checks if `value` exists in that column.  For example, a logic string we might support could be:  `title:harry and not "and"`.  This filter function will resolve true for any entries where:
+1. the title column contains "harry" (case-insensitive)
+2. the string "and" is not in any of the columns (case-insensitive)
+
+## The end
+That's all for now.  Happy parsing!
+
 
 
