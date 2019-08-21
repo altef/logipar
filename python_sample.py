@@ -1,6 +1,8 @@
 import lib.logipar as logipar
 import json
 
+print(dir(logipar))
+
 with open('sample_data.json') as json_file:
 	data = json.load(json_file)
 
@@ -8,9 +10,21 @@ print("-- Welcome to the book library --")
 s = input("Please enter an input string: ")
 
 l = logipar.logipar_Logipar()
+l.overwrite(logipar.logipar_Token.AND, "et")
 l.caseSensitive = False
 l.parse(s)
-print("\nOkay, it looks like you're looking for: {}\n\n".format(l.stringify()))
+
+
+def expandXOR(n):
+	if n.token.type == logipar.logipar_Token.XOR:
+		l = n.f(n.left)
+		r = n.f(n.right)
+		return "(({} AND NOT {}) OR (NOT {} AND {}))".format(l, r, l, r)
+	return None
+
+flattened = l.stringify(expandXOR)
+
+print("\nOkay, it looks like you're looking for: {}\n\n".format(flattened))
 
 
 def fancyFilter(row, value):

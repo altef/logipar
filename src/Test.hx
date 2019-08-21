@@ -11,12 +11,12 @@ class Test extends buddy.SingleSuite {
 		
 			// Let's try changing the syntax
 			var l = new logipar.Logipar();
-			l.syntax.set(logipar.Token.AND, 'et');
-			l.syntax.set(logipar.Token.OR, 'ou');
-			l.syntax.set(logipar.Token.XOR, 'xou');
-			l.syntax.set(logipar.Token.NOT, 'non');
-			l.syntax.set(logipar.Token.OPEN, '[');
-			l.syntax.set(logipar.Token.CLOSE, ']');
+			l.overwrite(logipar.Token.AND, 'et');
+			l.overwrite(logipar.Token.OR, 'ou');
+			l.overwrite(logipar.Token.XOR, 'xou');
+			l.overwrite(logipar.Token.NOT, 'non');
+			l.overwrite(logipar.Token.OPEN, '[');
+			l.overwrite(logipar.Token.CLOSE, ']');
 			
 			var tests = [
 				["[one ou two] et three ou non four", "((({one} OR {two}) AND {three}) OR NOT({four}))"],

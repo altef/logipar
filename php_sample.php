@@ -9,13 +9,26 @@ spl_autoload_register(function ($name) {
 $data = file_get_contents('sample_data.json');
 $data = json_decode($data, true);
 
+
+$lp = new \logipar\Logipar();
+$lp->overwrite("AND", "et");
+$lp->caseSensitive = False;
+
+
 print("-- Welcome to the book library --\n");
 $s = readline("Please enter an input string: ");
+$lp->parse($s);
 
-$l = new \logipar\Logipar();
-$l->caseSensitive = False;
-$l->parse($s);
-print("\nOkay, it looks like you're looking for: ".$l->stringify()."\n\n");
+$flattened = $lp->stringify(function($n) {
+	if ($n->token->type == "XOR") {
+		$l = call_user_func($n->f, $n->left);
+		$r = call_user_func($n->f, $n->right);
+		return "((" . $l . " AND NOT " . $r . ") OR (NOT " . $l . " AND " . $r . "))";
+	}
+	return null;
+});
+
+print("\nOkay, it looks like you're looking for: ".$flattened."\n\n");
 
 
 $fancyFilter = function($row, $value) {
@@ -37,7 +50,7 @@ $fancyFilter = function($row, $value) {
 	return false;
 };
 
-$f = $l->filterFunction($fancyFilter);
+$f = $lp->filterFunction($fancyFilter);
 
 $data = array_filter($data, $f);
 if (count($data) == 0)

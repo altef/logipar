@@ -9,7 +9,7 @@ class Node {
 	public var left:Node;  // Its left-child (presumably preceding operand)
 	public var right:Node;  // Its right-child (presumably succeeding operand)
 
-	public var f:(Node)->String; // This is so custom fancyString functions can call themselves recursively
+	public var f:Node->String; // This is so custom fancyString functions can call themselves recursively
 
 	/**
 	 * Construct a new node.  That is all.
@@ -31,21 +31,26 @@ class Node {
 	 * Logipar.stringify() examples in the repo's readme.
 	 */
 	public function fancyString(f:(Node)->String = null):String {
+		return _fancyString(this, f);
+	}
+
+
+	private function _fancyString(n:Node, f:(Node)->String = null):String {
 		var s = null;
 		if (f != null) {
-			this.f = f; // Store the function in the node
-			s = f(this);
-			this.f = null; // There it goes again
+			n.f = _fancyString.bind(_, f); 
+			s = f(n);
+			n.f = null; // There it goes again
 		}
 		if (s != null)
 			return s;
-		switch(token.type) {
+		switch(n.token.type) {
 			case Token.LITERAL:
-				return "{" + token.literal + "}";
+				return "{" + n.token.literal + "}";
 			case Token.NOT:
-				return "NOT(" + right.fancyString(f) + ")";
+				return "NOT(" + n.right.fancyString(f) + ")";
 			default:
-				return "(" + left.fancyString(f) + " " + Std.string(token.type) + " " + right.fancyString(f) + ")";
+				return "(" + n.left.fancyString(f) + " " + Std.string(n.token.type) + " " + n.right.fancyString(f) + ")";
 		}
 	}
 

@@ -30,14 +30,28 @@
 	
 		function onFilter() {
 			var l = new logipar.Logipar();
+			console.log(window);
+			console.log(l);
+			l.overwrite(logipar.Token.AND, "et");
 			l.caseSensitive = false;
 			l.parse(document.getElementById('filter').value);
 			console.log("Okay, it looks like you're looking for: ", l.stringify());
+	
+			var str = l.stringify(function(n) {
+				if (n.token.type == logipar.Token.XOR) {
+					return "((" + n.f(n.left) + " AND NOT " + n.f(n.right) + ") OR (NOT " + n.f(n.left) + " AND " + n.f(n.right) + "))";
+				}
+				if (n.token.type == logipar.Token.LITERAL) {
+					return n.token.literal + "";
+				}
+				return null;
+			});
+	
 			
 			f = l.filterFunction(fancyFilter)
 			data = sample_data.filter(f)
 			
-			var out = "";
+			var out = "<p>" + str + "</p>\n";
 			if (data.length == 0)
 				out = "No matching entries found."
 			else {

@@ -142,7 +142,7 @@ class logipar_Logipar:
     _hx_class_name = "logipar.Logipar"
     __slots__ = ("quotations", "caseSensitive", "syntax", "tree")
     _hx_fields = ["quotations", "caseSensitive", "syntax", "tree"]
-    _hx_methods = ["parse", "stringify", "filterFunction", "toString", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
+    _hx_methods = ["overwrite", "parse", "stringify", "filterFunction", "toString", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
 
     def __init__(self):
         self.tree = None
@@ -156,6 +156,10 @@ class logipar_Logipar:
         self.syntax = _g
         self.caseSensitive = True
         self.quotations = ["\"", "'"]
+
+    def overwrite(self,op,value):
+        if (op in self.syntax.h):
+            self.syntax.h[op] = value
 
     def parse(self,logic_string):
         tokens = self.tokenize(logic_string)
@@ -404,7 +408,7 @@ class logipar_Node:
     _hx_class_name = "logipar.Node"
     __slots__ = ("token", "left", "right", "f")
     _hx_fields = ["token", "left", "right", "f"]
-    _hx_methods = ["toString", "fancyString", "check"]
+    _hx_methods = ["toString", "fancyString", "_fancyString", "check"]
 
     def __init__(self,token):
         self.f = None
@@ -416,27 +420,34 @@ class logipar_Node:
         return self.fancyString()
 
     def fancyString(self,f = None):
+        return self._fancyString(self,f)
+
+    def _fancyString(self,n,f = None):
         s = None
         if (f is not None):
-            self.f = f
-            s = f(self)
-            self.f = None
+            f1 = self._fancyString
+            f2 = f
+            def _hx_local_0(n1):
+                return f1(n1,f2)
+            n.f = _hx_local_0
+            s = f(n)
+            n.f = None
         if (s is not None):
             return s
-        _g = self.token.type
-        _hx_local_0 = len(_g)
-        if (_hx_local_0 == 7):
+        _g = n.token.type
+        _hx_local_1 = len(_g)
+        if (_hx_local_1 == 7):
             if (_g == "LITERAL"):
-                return (("{" + HxOverrides.stringOrNull(self.token.literal)) + "}")
+                return (("{" + HxOverrides.stringOrNull(n.token.literal)) + "}")
             else:
-                return (((((("(" + HxOverrides.stringOrNull(self.left.fancyString(f))) + " ") + Std.string(self.token.type)) + " ") + HxOverrides.stringOrNull(self.right.fancyString(f))) + ")")
-        elif (_hx_local_0 == 3):
+                return (((((("(" + HxOverrides.stringOrNull(n.left.fancyString(f))) + " ") + Std.string(n.token.type)) + " ") + HxOverrides.stringOrNull(n.right.fancyString(f))) + ")")
+        elif (_hx_local_1 == 3):
             if (_g == "NOT"):
-                return (("NOT(" + HxOverrides.stringOrNull(self.right.fancyString(f))) + ")")
+                return (("NOT(" + HxOverrides.stringOrNull(n.right.fancyString(f))) + ")")
             else:
-                return (((((("(" + HxOverrides.stringOrNull(self.left.fancyString(f))) + " ") + Std.string(self.token.type)) + " ") + HxOverrides.stringOrNull(self.right.fancyString(f))) + ")")
+                return (((((("(" + HxOverrides.stringOrNull(n.left.fancyString(f))) + " ") + Std.string(n.token.type)) + " ") + HxOverrides.stringOrNull(n.right.fancyString(f))) + ")")
         else:
-            return (((((("(" + HxOverrides.stringOrNull(self.left.fancyString(f))) + " ") + Std.string(self.token.type)) + " ") + HxOverrides.stringOrNull(self.right.fancyString(f))) + ")")
+            return (((((("(" + HxOverrides.stringOrNull(n.left.fancyString(f))) + " ") + Std.string(n.token.type)) + " ") + HxOverrides.stringOrNull(n.right.fancyString(f))) + ")")
 
     def check(self,a,f):
         _g = self.token.type
