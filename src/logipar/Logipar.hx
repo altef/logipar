@@ -76,6 +76,8 @@ class Logipar {
 	public function filterFunction(f:(row:Dynamic, value:String)->Bool):(Dynamic)->Bool {
 		var enclosed = tree;
 		return function(a:Dynamic):Bool {
+			if (enclosed == null)
+				return true;
 			return enclosed.check(a, f);  // Recursively check through the tree
 		}
 	}

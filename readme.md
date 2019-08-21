@@ -45,7 +45,10 @@ Bad news.  Hopefully soon you'll be able to use your favourite package manager t
 Great question!  Here are some examples in different languages. 
 ## Usage
 ##### Javascript
-You can include [logipar.js](lib/logipar.js) in your code, or *** or however you get packages in.
+You can include [Logipar.js](js/Logipar.js) in your code, or *** or however you get packages in.
+```html
+<script src="Logipar.js"></script>
+```
 ```javascript
     // Include the library however works for you.  You can see how I did it in js_sample.html
     var lp = new logipar.Logipar();
@@ -53,16 +56,17 @@ You can include [logipar.js](lib/logipar.js) in your code, or *** or however you
     console.log(lp.stringify());
 ```
 ##### Python
+You can use [Logipar.py](python/logipar.py) in your project.
 ```python
-    import lib.logipar as logipar // it's lives in a lib directory, in this example
+    import logipar
     lp = logipar.logipar_Logipar()
     lp.parse("a AND b")
     print(lp.stringify())
 ```
 ##### Php
-*** wrap php into a PHAR
+You can use the library files directly, or download the handy [Logipar.phar](php/Logipar.phar).
 ```php
-    // Autoload it somehow here.  You can see how I do it in php_sample.php
+    require_once("Logipar.phar");   // If you're using the PHAR, it should take care of loading the classes for you.
     $lp = new \logipar\Logipar();
     $lp->parse("a AND b");
     print($lp->stringify());

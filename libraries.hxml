@@ -4,19 +4,15 @@
 
 
 logipar.Logipar 
---js lib/logipar.js
+--js js/Logipar.js
 
 --next 
 
 logipar.Logipar
---php lib/php
+--php php
 
 --next 
 
 logipar.Logipar 
---python lib/logipar.py
+--python python/logipar.py
 
---next 
-
-logipar.Logipar 
---neko lib/logipar.n

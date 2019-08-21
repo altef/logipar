@@ -9,3 +9,16 @@ libraries.hxml
 --main Test 
 --neko tests/Test.n
 -lib buddy
+
+--next 
+
+
+--main Test 
+--python tests/Test.py
+-lib buddy
+
+--next 
+
+--main Test 
+--php tests/php
+-lib buddy
