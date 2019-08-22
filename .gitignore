@@ -1,6 +1,7 @@
 __pycache__
 dss
 js/*.py
+*.pyc
 node_modules
 package-lock.json
 python/pip/build

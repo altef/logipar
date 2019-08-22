@@ -24,3 +24,7 @@ logipar.Logipar
 Logipar 
 --python python/logipar.py
 
+--next 
+
+Logipar 
+--python python/pip/logipar/logipar.py

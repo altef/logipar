@@ -96,9 +96,9 @@ class AsyncTools:
         completedItems = _hx_local_0
         next = None
         def _hx_local_5():
-            nonlocal running
             nonlocal pos
             nonlocal completed
+            nonlocal running
             if (not completed):
                 if (not it.hasNext()):
                     if (running <= 0):
@@ -112,8 +112,8 @@ class AsyncTools:
                     currentPos1 = (pos - 1)
                     running = (running + 1)
                     def _hx_local_4(err,mapped):
-                        nonlocal running
                         nonlocal completed
+                        nonlocal running
                         if (not completed):
                             if (err is not None):
                                 if (not completed):
@@ -1699,8 +1699,8 @@ class buddy_SuitesRunner:
                     syncResultCount = (syncResultCount + 1)
                     cb(result2.error,result2.step)
             def _hx_local_4(err1,testSteps):
-                nonlocal allSync
                 nonlocal result
+                nonlocal allSync
                 allSync = (allSync and ((len(testSteps) == syncResultCount)))
                 if (err1 is not None):
                     if allSync:
@@ -2033,8 +2033,8 @@ class buddy_reporting_TraceReporter:
         def _hx_local_5(s):
             nonlocal failures
             nonlocal failures
-            nonlocal pending
             nonlocal total
+            nonlocal pending
             if (s.error is not None):
                 failures = (failures + 1)
             _g = 0
