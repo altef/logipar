@@ -1,3 +1,6 @@
+[![npm](https://img.shields.io/npm/v/logipar)](https://npmjs.com/package/logipar) [![pypi](https://img.shields.io/pypi/v/logipar)](https://pypi.org/project/logipar/) [![haxelib install logipar](https://img.shields.io/badge/haxelib-logipar-orange, "haxelib install logipar")](https://lib.haxe.org/p/logipar/) [![php phar](https://img.shields.io/badge/php-Logipar.phar-orange, "PHP Logipar.phar")](https://github.com/altef/logipar/blob/master/php/Logipar.phar)
+
+
 # Logipar
 /lɑːdʒɪpɜːr/
 
@@ -27,7 +30,8 @@ A more complex example: `title=Cat XOR "title contains dog"`.  **Logipar** doesn
 
 # What can I do with it once it's parsed?
 
-Oh, man, whatever you want really!  You can test objects against the parse tree (using **Logipar**'s `filterFunction()` function - [see the filtering section](#filtering-data)).  You can flatten the parse tree to a string of your design (with the help of **Logipar**'s `stringify()` function - [see the stringing section](#stringification)).  I guess.. I guess that's really all.  But come on, what more do you even want??
+Oh, man, whatever you want really!  You can test objects against the parse tree (using a function **Logipar** returns - [see the filtering section](#filtering-data)).  You can flatten the parse tree to a string of your design (with the help of **Logipar**'s `stringify()` function - [see the stringing section](#stringification)).  
+I guess.. I guess that's really all.  But come on, what more do you even want??
 
 
 # Okay cool, can I use it though?
@@ -39,29 +43,44 @@ Oh, man, whatever you want really!  You can test objects against the parse tree 
 There are more, but I'm going to focus the examples on those for now.
 
 # Installation
-Bad news.  Hopefully soon you'll be able to use your favourite package manager to install it, but I haven't set that up yet.  For now, if you're in a hurry, you'll have to download library files manually.  Eventually it should be more like:
-* `pip install logipar`
+#### Javascript
+* `npm i logipar`
 * `yarn add logipar`
-* `npn install logipar`
-* `composer install logipar`
-* ???
+* Or you can just download and use [Logipar.js](https://github.com/altef/logipar/js/Logipar.js) - say in a `<script src="Logipar.js"></scrip>` tag. 
+
+#### Python
+* `pip install logipar`
+* Or you can just download and use [Logipar.py](https://github.com/altef/logipar/python/logipar.py) in your project.
+
+#### PHP
+Bad news. **Logipar** isn't on Composer.  I probably won't bother to add it there unless someone *really* wants it, because of [this issue](https://github.com/composer/packagist/issues/472).
+Good news! You can totally use this [Logipar.phar](https://github.com/altef/logipar/php/Logipar.phar) instead.  Or, you know, donwload the files directly if you want.
+
+#### Haxe
+* `haxelib install logipar`
+* Also the source files are [here](https://github.com/altef/logipar/src/logipar).
 
 # But how do I use it?
 Great question!  Here are some examples in different languages. 
 ## Usage
 ##### Javascript
-You can include [Logipar.js](https://github.com/altef/logipar/js/Logipar.js) in your code.
+```javascript
+const logipar = require("logipar")
+const lp = new logipar.Logipar();
+lp.parse("a AND b");
+console.log(lp.stringify())
+````
+Or you can include [Logipar.js](https://github.com/altef/logipar/js/Logipar.js) in your code.  Note that in this method the classes are accessed via `Logipar`, `Token`, and `Node` - rather than through a `logipar` constant, as above.
 ```html
 <script src="Logipar.js"></script>
 ```
 ```javascript
     // Include the library however works for you.  You can see how I did it in js_sample.html
-    var lp = new logipar.Logipar();
+    var lp = new Logipar();
     lp.parse("a AND b");
     console.log(lp.stringify());
 ```
 ##### Python
-You can use [Logipar.py](https://github.com/altef/logipar/python/logipar.py) in your project.
 ```python
     import logipar
     lp = logipar.logipar_Logipar()
@@ -69,9 +88,9 @@ You can use [Logipar.py](https://github.com/altef/logipar/python/logipar.py) in 
     print(lp.stringify())
 ```
 ##### Php
-You can use the library files directly, or download the handy [Logipar.phar](https://github.com/altef/logipar/php/Logipar.phar).
+When you're using the PHAR, it should take care of loading the classes for you.
 ```php
-    require_once("Logipar.phar");   // If you're using the PHAR, it should take care of loading the classes for you.
+    require_once("Logipar.phar");   
     $lp = new \logipar\Logipar();
     $lp->parse("a AND b");
     print($lp->stringify());
@@ -135,7 +154,7 @@ lp.overwrite(logipar.Token.AND, "&&");
 lp.overwrite(logipar.logipar_Token.AND, "et")
 ```
 ##### Php
-PHP is a little more problematic.  `AND`, `OR` and `XOR` are keywords in it, which makes it difficult to access those Token constants.  Rather than rename those variables, you can just use the string values. (You can do the same with the other ones, if you really want to - all the string values are the same as the constant after `Token.`.)
+PHP is a little more problematic.  `AND`, `OR` and `XOR` are keywords in it, which makes it difficult to access those Token constants.  Rather than rename those variables, you can just use the string values. (You can do the same with the other ones, if you really want to - **all the string values are the same as the constant after `Token.`.**)
 ```php
 $lp->overwrite("AND", "et");
 ```
@@ -163,9 +182,9 @@ First, we need to know if this is the type of node we want to change (`XOR`), so
 But wait.  What's going on there?   Well `XOR` nodes (and all binary nodes) have `left` and `right` properties, representing their preceeding and succeeding operands. (Unary nodes like `NOT` only have a `right` property; or rather, `left` will be null.)  So we're just saying:
 `(({LEFT} AND NOT {RIGHT}) OR (NOT {LEFT} AND {RIGHT}))`
 
-With one added wrinkle.  The `left` and `right` properties are nodes themselves.  They may contain `XOR`s of their own.  So we want to recursively call the same stringification function on them.  `f()` is a helper function available for the duration of the stringification process for this purpose.  That's why you see `n.f(n.left)` above.
+With one added wrinkle.  The `left` and `right` properties are nodes themselves.  They may contain `XOR`s of their own.  So we want to recursively call the same stringification function on them.  `f()` is a helper function available for the duration of the stringification process for this very purpose.  That's why you see `n.f(n.left)` above.
 
-The `return null;` lets **Logipar** know it should display the node as usual.  So in this case, anything that's not an `XOR` gets displayed as it normally would.
+The `return null;` lets **Logipar** know it should display any other node as usual.  So in this case, anything that's not an `XOR` gets displayed as it normally would.
 
 ##### Javascript
 ```javascript
@@ -202,64 +221,72 @@ $flattened = $lp->stringify(function($n) {
 
 ## Filtering data
 Sometimes you just want to filter an array of rows. Nothing more, nothing less.  Well, maybe more.  Maybe you want to do it based on _a logic string_. 
-**Logipar**'s `filterFunction` can help.  It creates a function you can use to filter your data.  But how does it work?  Well, let's take a look at this example in Haxe:
+**Logipar**'s `filterFunction` can help.  It creates a function you can use to filter your data.  But how does it work?  You handle the leaves, and we'll handle the logic tree.
+
+> Basically, you just need to decide if a given leaf resolves `true` or `false` for a given row of data.  And then we'll figure out if it matches overall.
+
+Here's an example in Haxe:
 
 ```haxe
-var myfilter:(Dynamic)->Bool = ls.filterFunction(function(row:Dynamic, value:String):Bool {
-	// This is  just checks the values against every column, in a case-insensitive way.  You can get as complex as you'd like.
-	// You can parse the value variable, etc.
-	for (f in Reflect.fields(row)) {
-		if (Std.string(Reflect.field(row, f)).toLowerCase().indexOf(value.toLowerCase()) != -1)
+var leafresolver = function(row:Dynamic, value:String):Bool {
+	// This is  just checks a leaf node (value) against every column in the data (row), in a case-insensitive way.  
+	// But you can get as complex as you'd like and parse the value variable however you like.
+	for (f in Reflect.fields(row)) { // For each property of row
+		if (Std.string(Reflect.field(row, f)).toLowerCase().indexOf(value.toLowerCase()) != -1) // If that property contains the leaf 
 			return true;
 	}
 	return false;
-});
+}
+var myfilter:(Dynamic)->Bool = ls.filterFunction(leafresolver);
 ```
-Okay, so you can see above that **Logipar**'s `filterFunction()` takes a function as its argument, and returns a function.  The first function we supply, the second we use to do our filtering.
-The function we pass in takes an `row` of data.  This is probably an object of some sort, but that's your journey.  For the sake of our example, let's say it's `{title: "Harry potter", "author": "J.K. Rowling"}`.
-It also takes a string `value`.
-The task of this function is to take `value` and see if it matches `row`.  You can do this however you want.  This function is then run on every `LITERAL` (the leaves of the logic tree), and we use its results to decide if the logic tree resolves to `true` or `false` for `row`.
+Okay, so you can see above that **Logipar**'s `filterFunction()` takes a function as its argument, and returns a function.  The first function (`leafresolver()`) we supply, the second we use to actually do our filtering.
+`leafresolver` takes a `row` of data.  This is probably an object of some sort, but that's your journey.  For the sake of our example, let's say it's `{title: "Harry potter", "author": "J.K. Rowling"}`.
+It also takes a string `value`.  This is the value of the leaf we're checking.  For the sake of our example, `harry`.
 
-The function that's returned you  can use on your data. For example, `myfilter(data[i])` will return `true` or `false` depending on if it matches the logic of the query.
+The task of this function is to take `value` and see if it matches for `row`.  You can do this however you want.  This function is then run on every `LITERAL` (the leaves of the logic tree), and we use its result to decide if the logic tree resolves to `true` or `false` for `row`.
 
-That's still pretty confusing.  Hopefully an example will clear it up.
+For this example, it'd check `Har` against each property in `row`: `title`, and `author`.  Since the title is `Harry Potter`, and we've specified in the function to convert to lowercase before checking, it'll match and return `true`.
+
+`filterFunction` returns a function, whcih you can then  use on your data. For example, `myfilter(data[i])` will return `true` or `false` depending on if it matches the logic of the query.
+
+That's still pretty confusing, but hopefully some more examples will clear it up.
 
 
 
 
 ##### Javascript
 ```javascript
-function fancyFilter(row, value) {
+function leafresolver(row, value) {
 	// This is  just checks the values against every column, in a case-insensitive way
 	for(var field in row)
 		if (row[field].toString().toLowerCase().includes(value.toLowerCase()))
 			return true;
 }
-f = lp.filterFunction(fancyFilter);
+f = lp.filterFunction(leafresolver);
 filtered_data = sample_data.filter(f);    // Javascript arrays have a filter function
 ```
 ##### Python
 ```python
-def fancyFilter(row, value):
+def leafresolver(row, value):
 	# This is  just checks the values against every column, in a case-insensitive way
 	for field in row:
 		if value.lower() in str(row[field]).lower():
 			return True
 	return False
 
-f = lp.filterFunction(fancyFilter)
+f = lp.filterFunction(leafresolver)
 data = list(filter(f, data)) # Python has a filter function too
 ```
 ##### Php
 ```php
-$fancyFilter = function($row, $value) {
+$leafresolver = function($row, $value) {
 	foreach($row as $field=>$v)
 		if (stripos($row[$field], $value) !== false)
 			return true;
 	return false;
 };
 
-$f = $lp->filterFunction($fancyFilter);
+$f = $lp->filterFunction($leafresolver);
 $data = array_filter($data, $f);    // Oh look, so does PHP
 ```
 
