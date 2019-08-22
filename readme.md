@@ -11,7 +11,7 @@
 Have you ever wanted to filter data based on a string of ANDs and ORs and NOTs?  Well now you can!  
 In fact, that's exactly what **Logipar** is here to help you do.
 
-If that doesn't help, check out our [Cat breed](https://github.com/altef/logipar) demo to see **Logipar** in action!
+If that doesn't help, check out our [Cat breed](https://altef.github.io/logipar) demo to see **Logipar** in action!
 
 **Logipar** supports:
 * AND
