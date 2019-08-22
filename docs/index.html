@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>Javascript sample</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link href='https://fonts.googleapis.com/css?family=Roboto+Slab' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Slabo+27px' rel='stylesheet' type='text/css'>
+	<link rel="stylesheet" href="style.css" />
+	<script src="http://code.jquery.com/jquery.js"></script>
+
+	<script src="Logipar.js"></script>
+	<script src="Table.js"></script>
+	<script src="cats.js"></script>
+	<script>
+	
+		var table = null;
+		$(function() {
+			table = new Table({
+				numbers: [ "Activeness",
+					"Docility", "Friendliness", "Grooming", "Hardiness", "Health", 
+					"Independence", "Intelligence", "Length lower", "Length upper", 
+					"Lifespan lower", "Lifespan upper", "Need for attention", "Playfulness",
+					"Shedding", "Vocality", "Weight lower", "Weight upper"
+				],
+				headings: [
+					"Breed", "Coat", "Key facts", "Size", "Shedding", "Tags",
+					"Description",
+					"Playfulness",
+					"Vocality",
+					"Activeness",
+					"Docility",
+					"Friendliness",
+					"Grooming",
+					"Hardiness",
+					"Health",
+					"Independence",
+					"Intelligence",
+					<!-- "Length lower", -->
+					<!-- "Length upper", -->
+					"Lifespan lower",
+					"Lifespan upper",
+					"Need for attention",
+					"Origin",
+					"Pattern",
+					<!-- "Weight lower", -->
+					<!-- "Weight upper", -->
+				], // Which headings to display, if you don't want all of them
+				container: $('#results'),
+			});
+			table.wrap = function(s) {
+				return s == null ? "" : s;
+			}
+			onFilter();
+			
+			$('.samples p').on('click', function() {
+				$('#filter').val($(this).attr('data-logic'));
+				onFilter();
+			});
+		});
+		function fancyFilter(row, value) {
+			value = value.replace(/\"/g, '')
+			if (!value.includes(":")) {
+				// This is a dumb one that just checks the values against every column
+				for(var field in row)
+					if (table.wrap(row[field]).toString().toLowerCase().includes(value.toLowerCase()))
+						return true
+			} else {
+				// We're specifying a specific field we want to look in
+				chunks = value.split(':');
+				field = chunks.shift();
+				val = chunks.join(':')
+				if (row.hasOwnProperty(field))
+					if (table.wrap(row[field]).toString().toLowerCase().includes(val.toLowerCase()))
+						return true
+			}
+			return false
+		}
+	
+	
+		function onFilter() {
+			var l = new logipar.Logipar();
+			//l.overwrite(logipar.Token.AND, "et");
+			l.caseSensitive = false;
+			try {
+				l.parse(document.getElementById('filter').value);
+				var s = l.stringify();
+				console.log("Okay, it looks like you're looking for: ", s);
+				$('#status').html('<p class="good">' + (s == null ? "[No query]" : s) + '</p>');
+				console.log("Generating filter function");
+				f = l.filterFunction(fancyFilter)
+				console.log("Filtering");
+				data = sample_data.filter(f)
+				table.updateData(data);
+			} catch (err) {
+				$('#status').html('<p class="bad">' + err['val'] + '</p>');
+				console.log(err, err['val']);
+			}
+	
+			var str = l.stringify(function(n) {
+				if (n.token.type == logipar.Token.XOR) {
+					return "((" + n.f(n.left) + " AND NOT " + n.f(n.right) + ") OR (NOT " + n.f(n.left) + " AND " + n.f(n.right) + "))";
+				}
+				if (n.token.type == logipar.Token.LITERAL) {
+					return n.token.literal + "";
+				}
+				return null;
+			});
+	
+			
+			return false;
+		}
+	</script>
+</head>
+<body>
+	<div class="section">
+		<h2>Example questions:</h2>
+		<div class="samples">
+			<p data-logic="Coat:Short AND Size:Small">What are the small, short haired cats?</p>
+			<p data-logic="Tags:Sociable AND NOT Tags:Playful">Which cats are tagged sociable but not playful?</p>
+			<p data-logic='NOT Breed:" "'>Which breeds are only one word?</p>
+			<p data-logic='Vocality:5 OR Vocality:1'>Which are the most and least vocal cats?</p>
+			<p data-logic="Breed:American XOR Breed:Shorthair">All American- breeds and all -Shorthair breeds EXCEPT the American Shorthair.  Is that even a real cat??</p>
+			<p data-logic="(Breed:u OR Breed:y OR Breed:z) and not (Breed:e OR Breed:a)">Which breeds contain the letters U or Y, but not E or A?</p>
+		</div>
+	</div>
+	<div class="section">
+		<h1>Here there be cats</h1>
+		<form onSubmit="return onFilter();">
+		<input type="text" placeholder="Logic string goes here" id="filter" />
+		<input type="submit" value="Filter" />
+		</form>
+		<div id="status">
+		
+		</div>
+		<div id="results">
+	
+		</div>
+	</div>
+</body>
+</html>

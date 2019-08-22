@@ -1,0 +1,205 @@
+.clr {
+	display: block;
+	float: none;
+	content: '.';
+	visibility: hidden;
+	height: 0;
+	clear: both;
+}
+
+#status {
+	min-height: 2em;
+}
+
+form {
+	display: flex;
+}
+form input[type=text] {
+	flex-grow: 1;
+}
+
+h1 select {
+	font-size: 14pt;
+	padding: .2em;
+	padding-left: 1em;
+	padding-right: 1em;
+}
+
+html, body {
+	height: 100%;
+	margin: 0px;
+	padding: 0px;
+}
+body {
+	font-family: 'Roboto', sans-serif;
+	background-color: #E5EFF5;
+	transition: background 1s;
+	font-size: 10pt;
+	background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAFCAYAAACNbyblAAAAI0lEQVQIW2NkwATGjGhixkD+WWRBsABIEUwQLgATRBEACQIAr8MEOZtA/yIAAAAASUVORK5CYII=);
+	height: calc(100% - 80px);
+	padding: 40px;
+	padding-right: 0;
+}
+
+input.filter {
+	box-sizing: border-box;
+	width: 100%;
+}
+
+textarea {
+	width: calc(100% - 2em);
+	height: 10em;
+	padding: 1em;
+}
+
+#status p {
+	padding: .2em;
+	padding-left: 1em;
+	padding-right: 1em;
+	color: #fff;
+}
+p.bad {
+	background-color: rgba( 190, 0, 0, 0.6 );
+}
+p.good {
+	background-color: rgba( 55, 192, 1, 0.6 );
+}
+.section {
+	background-color: #fff;
+	padding: 10px;
+	padding-left: 20px;
+	padding-right: 20px;
+	box-shadow: 4px 4px 18px -5px rgba(0,0,0,0.22);
+	margin: 20px;
+	margin-bottom: 10px;
+	margin-right: 40px;
+}
+
+
+input {
+	padding: 10px;
+}
+
+table {
+	border-spacing: 0px;
+	border-collapse: collapse;
+	width: 100%;
+	margin-top: 10px;
+	color: #5e5e5e;
+
+}
+
+td, th {
+	border: solid 1px #e2dbd9;
+	text-align: left;
+	padding: 3px;
+	padding-left: 10px;
+	background-color: #fff;
+	padding-right: 10px;
+}
+
+th {
+	background-color: #e2dbd9;
+	color: #5e5e5e;
+	cursor: pointer;
+}
+
+td.none {
+	white-space: nowrap;
+}
+
+
+
+span.sort {
+	cursor: pointer;
+}
+
+
+code {
+	background-color: #efefef;
+	padding-left: .4em;
+	padding-right: .4em;
+	font-weight: bold;
+}
+
+.samples p {
+	display: inline-block;
+	cursor: pointer;
+	background-color: #e4f2f5;
+	padding: .2em;
+	padding-left: .5em;
+	padding-right: .5em;
+	margin-right: .2em;
+}
+
+@media only screen and (max-width:2100px) {
+	.Pattern {
+		display: none;
+	}
+}
+
+
+@media only screen and (max-width:2000px) {
+	.Origin {
+		display: none;
+	}
+}
+
+
+@media only screen and (max-width:1870px) {
+	.Need, .Hardiness, .Activeness {
+		display: none;
+	}
+}
+
+
+@media only screen and (max-width:1625px) {
+	.Playfulness, .Health, .Independence {
+		display: none;
+	}
+}
+
+
+@media only screen and (max-width:1370px) {
+	.Description {
+		display: none;
+	}
+}
+
+@media only screen and (max-width:1270px) {
+	.Key {
+		display: none;
+	}
+}
+
+@media only screen and (max-width:1170px) {
+	.Tags {
+		display: none;
+	}
+}
+
+@media only screen and (max-width:1070px) {
+	.Grooming, .Docility {
+		display: none;
+	}
+}
+
+
+@media only screen and (max-width:920px) {
+	.Lifespan {
+		display: none;
+	}
+}
+
+
+@media only screen and (max-width:770px) {
+	.Intelligence {
+		display: none;
+	}
+}
+
+@media only screen and (max-width:680px) {
+	.Vocality {
+		display: none;
+	}
+}

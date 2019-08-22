@@ -3,7 +3,7 @@
 
 *noun*: Your go-to polyglot **logic string parser**.
 
-*verb*: parse that logic string, my friend.
+*verb*: Parse that logic string, my friend.
  
 
 # What is a logic string parser?
