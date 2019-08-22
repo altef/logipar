@@ -1,5 +1,7 @@
+#if !((js || python) && !addpackage)
+// Packages make it too wordy in these targets
 package logipar;
-
+#end
 
 using StringTools;
 import haxe.ds.GenericStack;

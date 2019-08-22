@@ -80,7 +80,7 @@
 	
 	
 		function onFilter() {
-			var l = new logipar.Logipar();
+			var l = new Logipar();
 			//l.overwrite(logipar.Token.AND, "et");
 			l.caseSensitive = false;
 			try {
@@ -99,10 +99,10 @@
 			}
 	
 			var str = l.stringify(function(n) {
-				if (n.token.type == logipar.Token.XOR) {
+				if (n.token.type == Token.XOR) {
 					return "((" + n.f(n.left) + " AND NOT " + n.f(n.right) + ") OR (NOT " + n.f(n.left) + " AND " + n.f(n.right) + "))";
 				}
-				if (n.token.type == logipar.Token.LITERAL) {
+				if (n.token.type == Token.LITERAL) {
 					return n.token.literal + "";
 				}
 				return null;

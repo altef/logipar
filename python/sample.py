@@ -2,20 +2,20 @@ import logipar
 import json, os
 
 
-with open(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'data.json') as json_file:
+with open(os.path.dirname(os.path.realpath(__file__)) + os.sep + 'cats.json') as json_file:
 	data = json.load(json_file)
 
-print("-- Welcome to the book library --")
+print("-- Welcome to the cat library --")
 s = input("Please enter an input string: ")
 
-l = logipar.logipar_Logipar()
-l.overwrite(logipar.logipar_Token.AND, "et")
+l = logipar.Logipar()
+l.overwrite(logipar.Token.AND, "et")
 l.caseSensitive = False
 l.parse(s)
 
 
 def expandXOR(n):
-	if n.token.type == logipar.logipar_Token.XOR:
+	if n.token.type == logipar.Token.XOR:
 		l = n.f(n.left)
 		r = n.f(n.right)
 		return "(({} AND NOT {}) OR (NOT {} AND {}))".format(l, r, l, r)
@@ -49,7 +49,7 @@ data = list(filter(f, data))
 if len(data) == 0:
 	print("No matching entries found.")
 	
-for book in data:
-	print("{} by {}".format(book['title'], book['authors']))
+for d in data:
+	print("{}".format(d['Breed']))
 
 print("\nFound {} entries.".format(len(data)))

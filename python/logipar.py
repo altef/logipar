@@ -27,119 +27,8 @@ class Enum:
 
 
 
-class Std:
-    _hx_class_name = "Std"
-    __slots__ = ()
-    _hx_statics = ["string"]
-
-    @staticmethod
-    def string(s):
-        return python_Boot.toString1(s,"")
-
-
-class StringTools:
-    _hx_class_name = "StringTools"
-    __slots__ = ()
-    _hx_statics = ["isSpace", "ltrim", "rtrim", "trim"]
-
-    @staticmethod
-    def isSpace(s,pos):
-        if (((len(s) == 0) or ((pos < 0))) or ((pos >= len(s)))):
-            return False
-        c = HxString.charCodeAt(s,pos)
-        if (not (((c > 8) and ((c < 14))))):
-            return (c == 32)
-        else:
-            return True
-
-    @staticmethod
-    def ltrim(s):
-        l = len(s)
-        r = 0
-        while ((r < l) and StringTools.isSpace(s,r)):
-            r = (r + 1)
-        if (r > 0):
-            return HxString.substr(s,r,(l - r))
-        else:
-            return s
-
-    @staticmethod
-    def rtrim(s):
-        l = len(s)
-        r = 0
-        while ((r < l) and StringTools.isSpace(s,((l - r) - 1))):
-            r = (r + 1)
-        if (r > 0):
-            return HxString.substr(s,0,(l - r))
-        else:
-            return s
-
-    @staticmethod
-    def trim(s):
-        return StringTools.ltrim(StringTools.rtrim(s))
-
-
-class haxe_IMap:
-    _hx_class_name = "haxe.IMap"
-    __slots__ = ()
-    _hx_methods = ["toString"]
-
-
-class haxe_ds_GenericCell:
-    _hx_class_name = "haxe.ds.GenericCell"
-    __slots__ = ("elt", "next")
-    _hx_fields = ["elt", "next"]
-
-    def __init__(self,elt,next):
-        self.elt = elt
-        self.next = next
-
-
-
-class haxe_ds_GenericStack:
-    _hx_class_name = "haxe.ds.GenericStack"
-    __slots__ = ("head",)
-    _hx_fields = ["head"]
-
-    def __init__(self):
-        self.head = None
-
-
-
-class haxe_ds_StringMap:
-    _hx_class_name = "haxe.ds.StringMap"
-    __slots__ = ("h",)
-    _hx_fields = ["h"]
-    _hx_methods = ["keys", "iterator", "toString"]
-
-    def __init__(self):
-        self.h = dict()
-
-    def keys(self):
-        return python_HaxeIterator(iter(self.h.keys()))
-
-    def iterator(self):
-        return python_HaxeIterator(iter(self.h.values()))
-
-    def toString(self):
-        s_b = python_lib_io_StringIO()
-        s_b.write("{")
-        it = self.keys()
-        i = it
-        while i.hasNext():
-            i1 = i.next()
-            s_b.write(Std.string(i1))
-            s_b.write(" => ")
-            s_b.write(Std.string(Std.string(self.h.get(i1,None))))
-            if it.hasNext():
-                s_b.write(", ")
-        s_b.write("}")
-        return s_b.getvalue()
-
-
-
-class logipar_Logipar:
-    _hx_class_name = "logipar.Logipar"
+class Logipar:
+    _hx_class_name = "Logipar"
     __slots__ = ("quotations", "caseSensitive", "syntax", "tree")
     _hx_fields = ["quotations", "caseSensitive", "syntax", "tree"]
     _hx_methods = ["overwrite", "parse", "stringify", "filterFunction", "toString", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
@@ -193,7 +82,7 @@ class logipar_Logipar:
             i = _g
             _g = (_g + 1)
             token = (tokens[i] if i >= 0 and i < len(tokens) else None)
-            n = logipar_Node(token)
+            n = Node(token)
             if (token.type != "LITERAL"):
                 if (stack.head is None):
                     raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.h.get(token.type,None))) + "' is missing a value to operate on (on its right)."))
@@ -390,8 +279,8 @@ class logipar_Logipar:
         while key.hasNext():
             key1 = key.next()
             if (self.tentativelyLower(token) == self.tentativelyLower(self.syntax.h.get(key1,None))):
-                return logipar_Token(key1)
-        return logipar_Token("LITERAL",token)
+                return Token(key1)
+        return Token("LITERAL",token)
 
     def typeize(self,tokens):
         _g = []
@@ -406,8 +295,8 @@ class logipar_Logipar:
 
 
 
-class logipar_Node:
-    _hx_class_name = "logipar.Node"
+class Node:
+    _hx_class_name = "Node"
     __slots__ = ("token", "left", "right", "f")
     _hx_fields = ["token", "left", "right", "f"]
     _hx_methods = ["toString", "fancyString", "_fancyString", "check"]
@@ -492,8 +381,60 @@ class logipar_Node:
 
 
 
-class logipar_Token:
-    _hx_class_name = "logipar.Token"
+class Std:
+    _hx_class_name = "Std"
+    __slots__ = ()
+    _hx_statics = ["string"]
+
+    @staticmethod
+    def string(s):
+        return python_Boot.toString1(s,"")
+
+
+class StringTools:
+    _hx_class_name = "StringTools"
+    __slots__ = ()
+    _hx_statics = ["isSpace", "ltrim", "rtrim", "trim"]
+
+    @staticmethod
+    def isSpace(s,pos):
+        if (((len(s) == 0) or ((pos < 0))) or ((pos >= len(s)))):
+            return False
+        c = HxString.charCodeAt(s,pos)
+        if (not (((c > 8) and ((c < 14))))):
+            return (c == 32)
+        else:
+            return True
+
+    @staticmethod
+    def ltrim(s):
+        l = len(s)
+        r = 0
+        while ((r < l) and StringTools.isSpace(s,r)):
+            r = (r + 1)
+        if (r > 0):
+            return HxString.substr(s,r,(l - r))
+        else:
+            return s
+
+    @staticmethod
+    def rtrim(s):
+        l = len(s)
+        r = 0
+        while ((r < l) and StringTools.isSpace(s,((l - r) - 1))):
+            r = (r + 1)
+        if (r > 0):
+            return HxString.substr(s,0,(l - r))
+        else:
+            return s
+
+    @staticmethod
+    def trim(s):
+        return StringTools.ltrim(StringTools.rtrim(s))
+
+
+class Token:
+    _hx_class_name = "Token"
     __slots__ = ("type", "literal")
     _hx_fields = ["type", "literal"]
     _hx_methods = ["precedence", "toString"]
@@ -527,6 +468,65 @@ class logipar_Token:
         if (self.type == "LITERAL"):
             return (("LITERAL(" + HxOverrides.stringOrNull(self.literal)) + ")")
         return Std.string(self.type)
+
+
+
+class haxe_IMap:
+    _hx_class_name = "haxe.IMap"
+    __slots__ = ()
+    _hx_methods = ["toString"]
+
+
+class haxe_ds_GenericCell:
+    _hx_class_name = "haxe.ds.GenericCell"
+    __slots__ = ("elt", "next")
+    _hx_fields = ["elt", "next"]
+
+    def __init__(self,elt,next):
+        self.elt = elt
+        self.next = next
+
+
+
+class haxe_ds_GenericStack:
+    _hx_class_name = "haxe.ds.GenericStack"
+    __slots__ = ("head",)
+    _hx_fields = ["head"]
+
+    def __init__(self):
+        self.head = None
+
+
+
+class haxe_ds_StringMap:
+    _hx_class_name = "haxe.ds.StringMap"
+    __slots__ = ("h",)
+    _hx_fields = ["h"]
+    _hx_methods = ["keys", "iterator", "toString"]
+
+    def __init__(self):
+        self.h = dict()
+
+    def keys(self):
+        return python_HaxeIterator(iter(self.h.keys()))
+
+    def iterator(self):
+        return python_HaxeIterator(iter(self.h.values()))
+
+    def toString(self):
+        s_b = python_lib_io_StringIO()
+        s_b.write("{")
+        it = self.keys()
+        i = it
+        while i.hasNext():
+            i1 = i.next()
+            s_b.write(Std.string(i1))
+            s_b.write(" => ")
+            s_b.write(Std.string(Std.string(self.h.get(i1,None))))
+            if it.hasNext():
+                s_b.write(", ")
+        s_b.write("}")
+        return s_b.getvalue()
 
 
 
@@ -899,12 +899,12 @@ Math.POSITIVE_INFINITY = float("inf")
 Math.NaN = float("nan")
 Math.PI = python_lib_Math.pi
 
-logipar_Token.AND = "AND"
-logipar_Token.OR = "OR"
-logipar_Token.XOR = "XOR"
-logipar_Token.NOT = "NOT"
-logipar_Token.OPEN = "OPEN"
-logipar_Token.CLOSE = "CLOSE"
-logipar_Token.LITERAL = "LITERAL"
+Token.AND = "AND"
+Token.OR = "OR"
+Token.XOR = "XOR"
+Token.NOT = "NOT"
+Token.OPEN = "OPEN"
+Token.CLOSE = "CLOSE"
+Token.LITERAL = "LITERAL"
 python_Boot.keywords = set(["and", "del", "from", "not", "with", "as", "elif", "global", "or", "yield", "assert", "else", "if", "pass", "None", "break", "except", "import", "raise", "True", "class", "exec", "in", "return", "False", "continue", "finally", "is", "try", "def", "for", "lambda", "while"])
 python_Boot.prefixLength = len("_hx_")

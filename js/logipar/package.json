@@ -1,8 +1,12 @@
 {
 	"name": "logipar",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"description": "A logic string parser",
-	"keywords": ["logic", "parser", "filter"],
+	"keywords": [
+		"logic",
+		"parser",
+		"filter"
+	],
 	"homepage": "https://github.com/altef/logipar",
 	"bugs": "https://github.com/altef/logipar/issues",
 	"license": "MIT",
@@ -10,8 +14,10 @@
 		"name": "Brad Gill",
 		"url": "http://www.bradleygill.com"
 	},
-	"contributers": [], 
-	"files": ["Logipar.js"],
+	"contributers": [],
+	"files": [
+		"Logipar.js"
+	],
 	"main": "Logipar.js",
 	"repository": "github:altef/logipar"
 }

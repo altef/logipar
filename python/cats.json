@@ -1,4 +1,4 @@
-sample_data = [
+[
     {
         "Activeness": "3",
         "Breed": "Russian Blue",
@@ -1827,4 +1827,3 @@ sample_data = [
         "Weight upper": null
     }
 ]
-module.exports = sample_data

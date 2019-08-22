@@ -15,6 +15,7 @@ libraries.hxml
 
 --main Test 
 --python tests/Test.py
+-D addpackage
 -lib buddy
 
 --next 

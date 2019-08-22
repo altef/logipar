@@ -4,7 +4,7 @@
 include("Logipar.phar");
 
 
-$data = file_get_contents(dirname(__FILE__).'/data.json');
+$data = file_get_contents(dirname(__FILE__).'/cats.json');
 $data = json_decode($data, true);
 
 
@@ -13,7 +13,7 @@ $lp->overwrite("AND", "et");
 $lp->caseSensitive = False;
 
 
-print("-- Welcome to the book library --\n");
+print("-- Welcome to the cat library --\n");
 $s = readline("Please enter an input string: ");
 $lp->parse($s);
 
@@ -54,8 +54,8 @@ $data = array_filter($data, $f);
 if (count($data) == 0)
 	print("No matching entries found.");
 
-foreach($data as $k=>$book)
-	print($book['title'] . " by " . $book['authors']."\n");
+foreach($data as $k=>$d)
+	print($d['Breed']."\n");
 print("\nFound ".count($data)." entries.");
 
 ?>
