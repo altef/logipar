@@ -1,0 +1,4 @@
+--main Test 
+--interp
+-lib buddy
+-lib logipar

@@ -1,0 +1,21 @@
+{
+	"name": "logipar",
+	"url" : "https://github.com/altef/logipar/",
+	"license": "MIT",
+	"tags": [
+		"logic",
+		"parser",
+		"filter",
+		"javascript",
+		"js",
+		"python",
+		"node",
+		"php"
+	],
+	"description": "A logic string parser for multiple platforms",
+	"version": "0.1.1",
+	"classPath": "src/",
+	"releasenote": "Testing haxelib release.",
+	"contributors": ["altef"],
+	"dependencies": {}
+}

@@ -8,3 +8,4 @@ And here's what they're for:
 * [tests/](tests/) – holds some tests to verify things are working as expected
 * [build.hxml](build.hxml) – tells haxe to build the library and the tests.  Run it with `haxe build.hxml`
 * [libraries.hxml](libraries.hxml) – tells haxe to just build the library for the targets.  Run it with `haxe libraries.hxml`
+* [haxelib/](haxelib/) – Holds all the files for Haxelib packaging and testing
