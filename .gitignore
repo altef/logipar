@@ -3,3 +3,6 @@ dss
 js/*.py
 node_modules
 package-lock.json
+python/pip/build
+python/pip/dist
+python/pip/logipar.egg-info

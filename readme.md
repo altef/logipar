@@ -31,7 +31,7 @@ Oh, man, whatever you want really!  You can test objects against the parse tree 
 
 
 # Okay cool, can I use it though?
-**Logipar** is written in [Haxe](haxe.org).  **WAIT DON'T BE SCARED**.  All that means for you is it can be (and is) compiled to multiple languages.  Maybe you've heard of one of these before:
+**Logipar** is written in [Haxe](https://haxe.org).  **WAIT DON'T BE SCARED**.  All that means for you is it can be (and is) compiled to multiple languages.  Maybe you've heard of one of these before:
 * Javascript
 * Python
 * PHP
@@ -50,7 +50,7 @@ Bad news.  Hopefully soon you'll be able to use your favourite package manager t
 Great question!  Here are some examples in different languages. 
 ## Usage
 ##### Javascript
-You can include [Logipar.js](js/Logipar.js) in your code.
+You can include [Logipar.js](https://github.com/altef/logipar/js/Logipar.js) in your code.
 ```html
 <script src="Logipar.js"></script>
 ```
@@ -61,7 +61,7 @@ You can include [Logipar.js](js/Logipar.js) in your code.
     console.log(lp.stringify());
 ```
 ##### Python
-You can use [Logipar.py](python/logipar.py) in your project.
+You can use [Logipar.py](https://github.com/altef/logipar/python/logipar.py) in your project.
 ```python
     import logipar
     lp = logipar.logipar_Logipar()
@@ -69,7 +69,7 @@ You can use [Logipar.py](python/logipar.py) in your project.
     print(lp.stringify())
 ```
 ##### Php
-You can use the library files directly, or download the handy [Logipar.phar](php/Logipar.phar).
+You can use the library files directly, or download the handy [Logipar.phar](https://github.com/altef/logipar/php/Logipar.phar).
 ```php
     require_once("Logipar.phar");   // If you're using the PHAR, it should take care of loading the classes for you.
     $lp = new \logipar\Logipar();
