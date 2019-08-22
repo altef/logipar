@@ -6,7 +6,6 @@ package logipar;
 using StringTools;
 import haxe.ds.GenericStack;
 
-
 @:expose
 @:keep
 class Logipar {

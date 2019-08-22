@@ -7,3 +7,13 @@ Running `haxe build.hxml` in the base directory compiles **Logipar** to its targ
 * `php php/index.php`  – runs the PHP test
 
 These tests are defined in [/src/Test.hx](../src/Test.hx).
+
+
+It's also a good idea to test the samples.
+
+* `php php/sample.php`
+* `python python/sample.py`
+* `node js/sample.js`
+* Open [js/index.html](js/index.html} in a web browser.
+
+Presumably the package managed samples should be tested when deploying a new version to the individual package managers.
