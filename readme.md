@@ -4,12 +4,15 @@
 *noun*: Your go-to polyglot **logic string parser**.
 
 *verb*: Parse that logic string, my friend.
- 
+
 
 # What is a logic string parser?
 
 Have you ever wanted to filter data based on a string of ANDs and ORs and NOTs?  Well now you can!  
 In fact, that's exactly what **Logipar** is here to help you do.
+
+If that doesn't help, check out our [Cat breed](https://github.com/altef/logipar) demo to see **Logipar** in action!
+
 **Logipar** supports:
 * AND
 * OR
