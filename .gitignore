@@ -1,3 +1,5 @@
 __pycache__
 dss
 js/*.py
+node_modules
+package-lock.json
