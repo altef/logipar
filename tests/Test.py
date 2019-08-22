@@ -764,6 +764,23 @@ class Test(buddy_SingleSuite):
                 tmp9 = buddy_TestFunc.Sync(_hx_local_20(t8))
                 _gthis.it(tmp8,tmp9,None,_hx_AnonObject({'fileName': "src/Test.hx", 'lineNumber': 89, 'className': "Test", 'methodName': "new"}))
         self.describe("Testing a custom string",buddy_TestFunc.Sync(_hx_local_21))
+        def _hx_local_25():
+            l5 = logipar_Logipar()
+            l5.caseSensitive = False
+            tests5 = [["\"a and b\" or c", "({\"a and b\"} OR {c})"], ["\"a and (b)\" or c", "({\"a and (b)\"} OR {c})"]]
+            _g5 = 0
+            while (_g5 < len(tests5)):
+                t10 = [(tests5[_g5] if _g5 >= 0 and _g5 < len(tests5) else None)]
+                _g5 = (_g5 + 1)
+                tmp11 = ("Testing: " + HxOverrides.stringOrNull(python_internal_ArrayImpl._get((t10[0] if 0 < len(t10) else None), 0)))
+                def _hx_local_24(t11):
+                    def _hx_local_23():
+                        l5.parse(python_internal_ArrayImpl._get((t11[0] if 0 < len(t11) else None), 0))
+                        buddy_ShouldString.should(l5.stringify()).be(python_internal_ArrayImpl._get((t11[0] if 0 < len(t11) else None), 1),_hx_AnonObject({'fileName': "src/Test.hx", 'lineNumber': 115, 'className': "Test", 'methodName': "new"}))
+                    return _hx_local_23
+                tmp12 = buddy_TestFunc.Sync(_hx_local_24(t10))
+                _gthis.it(tmp11,tmp12,None,_hx_AnonObject({'fileName': "src/Test.hx", 'lineNumber': 113, 'className': "Test", 'methodName': "new"}))
+        self.describe("Does quoting still work?",buddy_TestFunc.Sync(_hx_local_25))
 
     @staticmethod
     def main():
@@ -2014,10 +2031,10 @@ class buddy_reporting_TraceReporter:
         countTests = None
         printTests = None
         def _hx_local_5(s):
+            nonlocal failures
+            nonlocal failures
             nonlocal pending
             nonlocal total
-            nonlocal failures
-            nonlocal failures
             if (s.error is not None):
                 failures = (failures + 1)
             _g = 0
@@ -2882,12 +2899,12 @@ class logipar_Logipar:
             i = _g1
             _g1 = (_g1 + 1)
             c = ("" if (((i < 0) or ((i >= len(_hx_str))))) else _hx_str[i])
-            if (python_internal_ArrayImpl.indexOf(keys,self.tentativelyLower(c),None) == -1):
-                if (python_internal_ArrayImpl.indexOf(self.quotations,c,None) != -1):
-                    if (quotation is None):
-                        quotation = c
-                    elif (quotation == c):
-                        quotation = None
+            if (python_internal_ArrayImpl.indexOf(self.quotations,c,None) != -1):
+                if (quotation is None):
+                    quotation = c
+                elif (quotation == c):
+                    quotation = None
+            if ((quotation is not None) or ((python_internal_ArrayImpl.indexOf(keys,self.tentativelyLower(c),None) == -1))):
                 if (StringTools.isSpace(c,0) and ((quotation is None))):
                     if (len(current) > 0):
                         tokens.append(current)

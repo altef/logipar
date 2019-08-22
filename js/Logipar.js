@@ -495,14 +495,14 @@ logipar_Logipar.prototype = {
 		while(_g1 < _g2) {
 			var i = _g1++;
 			var c = str.charAt(i);
-			if(keys.indexOf(this.tentativelyLower(c)) == -1) {
-				if(this.quotations.indexOf(c) != -1) {
-					if(quotation == null) {
-						quotation = c;
-					} else if(quotation == c) {
-						quotation = null;
-					}
+			if(this.quotations.indexOf(c) != -1) {
+				if(quotation == null) {
+					quotation = c;
+				} else if(quotation == c) {
+					quotation = null;
 				}
+			}
+			if(quotation != null || keys.indexOf(this.tentativelyLower(c)) == -1) {
 				if(StringTools.isSpace(c,0) && quotation == null) {
 					if(current.length > 0) {
 						tokens.push(current);

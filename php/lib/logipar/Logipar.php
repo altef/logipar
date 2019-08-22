@@ -337,19 +337,19 @@ class Logipar {
 			$i = $_g1++;
 			#src/logipar/Logipar.hx:193: characters 4-26
 			$c = ($i < 0 ? "" : mb_substr($str, $i, 1));
-			#src/logipar/Logipar.hx:194: lines 194-217
-			if ($keys->indexOf($this->tentativelyLower($c)) === -1) {
-				#src/logipar/Logipar.hx:197: lines 197-203
-				if ($this->quotations->indexOf($c) !== -1) {
-					#src/logipar/Logipar.hx:198: lines 198-202
-					if ($quotation === null) {
-						#src/logipar/Logipar.hx:199: characters 7-20
-						$quotation = $c;
-					} else if ($quotation === $c) {
-						#src/logipar/Logipar.hx:201: characters 7-23
-						$quotation = null;
-					}
+			#src/logipar/Logipar.hx:196: lines 196-202
+			if ($this->quotations->indexOf($c) !== -1) {
+				#src/logipar/Logipar.hx:197: lines 197-201
+				if ($quotation === null) {
+					#src/logipar/Logipar.hx:198: characters 6-19
+					$quotation = $c;
+				} else if ($quotation === $c) {
+					#src/logipar/Logipar.hx:200: characters 6-22
+					$quotation = null;
 				}
+			}
+			#src/logipar/Logipar.hx:204: lines 204-217
+			if (($quotation !== null) || ($keys->indexOf($this->tentativelyLower($c)) === -1)) {
 				#src/logipar/Logipar.hx:205: lines 205-210
 				if (\StringTools::isSpace($c, 0) && ($quotation === null)) {
 					#src/logipar/Logipar.hx:206: lines 206-207

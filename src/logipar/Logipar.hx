@@ -191,17 +191,17 @@ class Logipar {
 		var current:String = '';
 		for(i in 0...str.length) {
 			var c = str.charAt(i);
-			if (keys.indexOf(tentativelyLower(c)) == -1) {
-				
-				// Toggle in and out of quotation mode
-				if (quotations.indexOf(c) != -1) {
-					if (quotation == null) {
-						quotation = c;
-					} else if (quotation == c) {
-						quotation = null;
-					}
+			
+			// Toggle in and out of quotation mode
+			if (quotations.indexOf(c) != -1) {
+				if (quotation == null) {
+					quotation = c;
+				} else if (quotation == c) {
+					quotation = null;
 				}
-				
+			}
+			
+			if (quotation != null || keys.indexOf(tentativelyLower(c)) == -1) {
 				if (c.isSpace(0) && quotation == null) {
 					if (current.length > 0)
 						tokens.push(current);

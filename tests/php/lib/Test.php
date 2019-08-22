@@ -67,7 +67,7 @@ class Test extends SingleSuite {
 		};
 		#C:\HaxeToolkit\haxe\lib\buddy/2,10,2/buddy/internal/GenerateMain.hx:222: lines 222-230
 		$startRun = function ($done)  use (&$outputError, &$runner) {
-			#src/Test.hx:6: lines 6-108
+			#src/Test.hx:6: lines 6-124
 			$runner1 = \Array_hx::wrap([new Test()]);
 			#C:\HaxeToolkit\haxe\lib\buddy/2,10,2/buddy/internal/GenerateMain.hx:223: characters 5-60
 			$runner = new SuitesRunner($runner1, new ConsoleReporter());
@@ -95,7 +95,7 @@ class Test extends SingleSuite {
 	 * @return void
 	 */
 	public function __construct () {
-		#src/Test.hx:8: lines 8-106
+		#src/Test.hx:8: lines 8-122
 		$_gthis = $this;
 		#C:\HaxeToolkit\haxe\lib\buddy/2,10,2/buddy/internal/SuiteBuilder.hx:343: characters 40-47
 		parent::__construct();
@@ -346,6 +346,53 @@ class Test extends SingleSuite {
 				$_gthis->it("Testing: " . (($t4->arr[0] ?? null)??'null'), $tmp4, null, new HxAnon([
 					"fileName" => "src/Test.hx",
 					"lineNumber" => 89,
+					"className" => "Test",
+					"methodName" => "new",
+				]));
+			}
+
+		}));
+		#src/Test.hx:105: lines 105-118
+		$this->describe("Does quoting still work?", TestFunc::Sync(function ()  use (&$_gthis) {
+			#src/Test.hx:106: characters 4-34
+			$l5 = new Logipar();
+			#src/Test.hx:107: characters 4-27
+			$l5->caseSensitive = false;
+			#src/Test.hx:108: lines 108-111
+			$tests5 = \Array_hx::wrap([
+				\Array_hx::wrap([
+					"\"a and b\" or c",
+					"({\"a and b\"} OR {c})",
+				]),
+				\Array_hx::wrap([
+					"\"a and (b)\" or c",
+					"({\"a and (b)\"} OR {c})",
+				]),
+			]);
+			#src/Test.hx:112: lines 112-117
+			$_g5 = 0;
+			while ($_g5 < $tests5->length) {
+				unset($t5);
+				#src/Test.hx:112: characters 8-9
+				$t5 = ($tests5->arr[$_g5] ?? null);
+				#src/Test.hx:112: lines 112-117
+				++$_g5;
+				#C:\HaxeToolkit\haxe\lib\buddy/2,10,2/buddy/internal/SuiteBuilder.hx:243: characters 34-43
+				$tmp5 = TestFunc::Sync(function ()  use (&$l5, &$t5) {
+					#src/Test.hx:114: characters 6-19
+					$l5->parse(($t5->arr[0] ?? null));
+					#src/Test.hx:115: characters 6-35
+					ShouldString::should($l5->stringify())->be(($t5->arr[1] ?? null), new HxAnon([
+						"fileName" => "src/Test.hx",
+						"lineNumber" => 115,
+						"className" => "Test",
+						"methodName" => "new",
+					]));
+				});
+				#src/Test.hx:113: lines 113-116
+				$_gthis->it("Testing: " . (($t5->arr[0] ?? null)??'null'), $tmp5, null, new HxAnon([
+					"fileName" => "src/Test.hx",
+					"lineNumber" => 113,
 					"className" => "Test",
 					"methodName" => "new",
 				]));

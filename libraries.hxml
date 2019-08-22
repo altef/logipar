@@ -8,6 +8,11 @@ logipar.Logipar
 
 --next 
 
+logipar.Logipar 
+--js docs/Logipar.js
+
+--next 
+
 logipar.Logipar
 --php php
 

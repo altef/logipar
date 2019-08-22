@@ -102,6 +102,22 @@ class Test extends buddy.SingleSuite {
 
 		});
 		
+		describe("Does quoting still work?", {
+			var l = new logipar.Logipar();
+			l.caseSensitive = false;
+			var tests = [
+				['"a and b" or c', "({\"a and b\"} OR {c})"],
+				['"a and (b)" or c', "({\"a and (b)\"} OR {c})"],
+			];
+			for(t in tests) {
+				it("Testing: " + t[0], {
+					l.parse(t[0]);
+					l.stringify().should.be(t[1]);
+				});
+			}
+		});
+		
+		
 		// I should test the filterFunction stuff, but I'm too lazy atm...
 	}
 	

@@ -363,12 +363,12 @@ class logipar_Logipar:
             i = _g1
             _g1 = (_g1 + 1)
             c = ("" if (((i < 0) or ((i >= len(_hx_str))))) else _hx_str[i])
-            if (python_internal_ArrayImpl.indexOf(keys,self.tentativelyLower(c),None) == -1):
-                if (python_internal_ArrayImpl.indexOf(self.quotations,c,None) != -1):
-                    if (quotation is None):
-                        quotation = c
-                    elif (quotation == c):
-                        quotation = None
+            if (python_internal_ArrayImpl.indexOf(self.quotations,c,None) != -1):
+                if (quotation is None):
+                    quotation = c
+                elif (quotation == c):
+                    quotation = None
+            if ((quotation is not None) or ((python_internal_ArrayImpl.indexOf(keys,self.tentativelyLower(c),None) == -1))):
                 if (StringTools.isSpace(c,0) and ((quotation is None))):
                     if (len(current) > 0):
                         tokens.append(current)
