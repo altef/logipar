@@ -4,7 +4,7 @@
 
 
 logipar.Logipar 
---js js/Logipar.js
+--js js/logipar/Logipar.js
 
 --next 
 
