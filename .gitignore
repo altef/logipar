@@ -8,3 +8,5 @@ python/pip/build
 python/pip/dist
 python/pip/logipar.egg-info
 *.zip
+tests/
+!tests/readme.md

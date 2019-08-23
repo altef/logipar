@@ -1,6 +1,6 @@
 # Tests
 
-Running `haxe build.hxml` in the base directory compiles **Logipar** to its targets, and also creates these test files.
+Running `haxe build.hxml` in the base directory compiles **Logipar** to its targets, and also creates test files here.
 
 * `neko Test.n`  – runs the Neko test
 * `python Test.py`  – runs the Python test
