@@ -46,19 +46,19 @@ There are more, but I'm going to focus the examples on those for now.
 #### Javascript
 * `npm i logipar`
 * `yarn add logipar`
-* Or you can just download and use [Logipar.js](https://github.com/altef/logipar/js/Logipar.js) - say in a `<script src="Logipar.js"></scrip>` tag. 
+* Or you can just download and use [Logipar.js](https://github.com/altef/logipar/blob/master/js/logipar/Logipar.js) - say in a `<script src="Logipar.js"></scrip>` tag. 
 
 #### Python
 * `pip install logipar`
-* Or you can just download and use [Logipar.py](https://github.com/altef/logipar/python/logipar.py) in your project.
+* Or you can just download and use [Logipar.py](https://github.com/altef/logipar/blob/master/python/logipar.py) in your project.
 
 #### PHP
 Bad news. **Logipar** isn't on Composer.  I probably won't bother to add it there unless someone *really* wants it, because of [this issue](https://github.com/composer/packagist/issues/472).
-Good news! You can totally use this [Logipar.phar](https://github.com/altef/logipar/php/Logipar.phar) instead.  Or, you know, donwload the files directly if you want.
+Good news! You can totally use this [Logipar.phar](https://github.com/altef/logipar/blob/master/php/Logipar.phar) instead.  Or, you know, donwload the files directly if you want.
 
 #### Haxe
 * `haxelib install logipar`
-* Also the source files are [here](https://github.com/altef/logipar/src/logipar).
+* Also the source files are [here](https://github.com/altef/logipar/blob/master/src/logipar).
 
 # But how do I use it?
 Great question!  Here are some examples in different languages. 
@@ -71,7 +71,7 @@ const lp = new logipar.Logipar();
 lp.parse("a AND b");
 console.log(lp.stringify())
 ````
-Or you can include [Logipar.js](https://github.com/altef/logipar/js/Logipar.js) in your code.  Note that in this method the classes are accessed via `Logipar`, `Token`, and `Node` - rather than through a `logipar` constant, as above.
+Or you can include [Logipar.js](https://github.com/altef/logipar/blob/master/js/Logipar.js) in your code.  Note that in this method the classes are accessed via `Logipar`, `Token`, and `Node` - rather than through a `logipar` constant, as above.
 ```html
 <script src="Logipar.js"></script>
 ```
@@ -320,7 +320,7 @@ What this function does is it allows for values in the format `column:value` and
 1. the title column contains "harry" (case-insensitive)
 2. the string "and" is not in any of the columns (case-insensitive)
 
-**To see some more filtering examples, check out: [docs/filters.md](https://github.com/altef/logipar/docs/filters.md).**
+**To see some more filtering examples, check out: [docs/filters.md](https://github.com/altef/logipar/blob/master/docs/filters.md).**
 
 ## The end
 That's all for now.  Happy parsing!

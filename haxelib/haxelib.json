@@ -13,9 +13,9 @@
 		"php"
 	],
 	"description": "A logic string parser for multiple platforms",
-	"version": "0.1.1",
+	"version": "0.2.4",
 	"classPath": "src/",
-	"releasenote": "Testing haxelib release.",
+	"releasenote": "Catching up to NPM and PYPI version numbers.",
 	"contributors": ["altef"],
 	"dependencies": {}
 }
