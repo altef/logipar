@@ -46,7 +46,7 @@ There are more, but I'm going to focus the examples on those for now.
 #### Javascript
 * `npm i logipar`
 * `yarn add logipar`
-* Or you can just download and use [Logipar.js](https://github.com/altef/logipar/blob/master/js/Logipar.js) - say in a `<script src="Logipar.js"></scrip>` tag. 
+* Or you can just download and use [Logipar.js](https://github.com/altef/logipar/blob/master/js/logipar/Logipar.js) - say in a `<script src="Logipar.js"></scrip>` tag. 
 
 #### Python
 * `pip install logipar`
