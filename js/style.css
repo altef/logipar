@@ -41,6 +41,23 @@ body {
 	padding-right: 0;
 }
 
+a.github {
+	color: #000;
+	text-decoration: none;
+	font-size: 1em;
+	display: inline-block;
+	background-color: #fff;
+	padding: 10px;
+	padding-left: 20px;
+	padding-right: 20px;
+	box-shadow: 4px 4px 18px -5px rgba(0,0,0,0.22);
+	margin: 0;
+	margin-left: 20px;
+}
+a.github svg {
+	font-size: 1.5em;
+}
+
 input.filter {
 	box-sizing: border-box;
 	width: 100%;

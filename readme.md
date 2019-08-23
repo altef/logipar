@@ -14,7 +14,7 @@
 Have you ever wanted to filter data based on a string of ANDs and ORs and NOTs?  Well now you can!  
 In fact, that's exactly what **Logipar** is here to help you do.
 
-If that doesn't help, check out our [Cat breed](https://altef.github.io/logipar) demo to see **Logipar** in action!
+If that doesn't help, check out our [Cat breed](https://altef.github.io/logipar) demo to see **Logipar** in action!  Or you can try it yourself on [Runkit](https://npm.runkit.com/logipar).
 
 **Logipar** supports:
 * AND
@@ -64,6 +64,7 @@ Good news! You can totally use this [Logipar.phar](https://github.com/altef/logi
 Great question!  Here are some examples in different languages. 
 ## Usage
 ##### Javascript
+You can follow along with these javascript samples on  on [Runkit](https://npm.runkit.com/logipar).
 ```javascript
 const logipar = require("logipar")
 const lp = new logipar.Logipar();
@@ -261,6 +262,7 @@ function leafresolver(row, value) {
 	for(var field in row)
 		if (row[field].toString().toLowerCase().includes(value.toLowerCase()))
 			return true;
+	return false;
 }
 f = lp.filterFunction(leafresolver);
 filtered_data = sample_data.filter(f);    // Javascript arrays have a filter function
@@ -317,6 +319,8 @@ var f = ls.filterFunction(function(row:Dynamic, value:String):Bool {
 What this function does is it allows for values in the format `column:value` and then checks if `value` exists in that column.  For example, a logic string we might support could be:  `title:harry and not "and"`.  This filter function will resolve true for any entries where:
 1. the title column contains "harry" (case-insensitive)
 2. the string "and" is not in any of the columns (case-insensitive)
+
+**To see some more filtering examples, check out: [docs/filters.md](https://github.com/altef/logipar/docs/filters.md).**
 
 ## The end
 That's all for now.  Happy parsing!

@@ -50,7 +50,7 @@
 				container: $('#results'),
 			});
 			table.wrap = function(s) {
-				return s == null ? "" : s;
+				return s == null ? "" : s.toString();
 			}
 			onFilter();
 			
@@ -59,21 +59,46 @@
 				onFilter();
 			});
 		});
-		function fancyFilter(row, value) {
-			value = value.replace(/\"/g, '')
-			if (!value.includes(":")) {
-				// This is a dumb one that just checks the values against every column
+		function generalLeafResolver(row, value) {
+			var operators = [':', '=', '<', '>']; // Contains, equals, less than, greater than
+			var operator = null;
+			for(let i=0; i < operators.length; i++)
+				if (value.indexOf(operators[i]) !== -1) {
+					operator = operators[i]
+					break
+				}
+			
+			
+			if (operator === null) {
+				// Just checks every field to see if it includes value
+				value = value.replace(/\"/g, '');
 				for(var field in row)
-					if (table.wrap(row[field]).toString().toLowerCase().includes(value.toLowerCase()))
+					if (table.wrap(row[field]).toLowerCase().includes(value.toLowerCase()))
 						return true
 			} else {
 				// We're specifying a specific field we want to look in
-				chunks = value.split(':');
-				field = chunks.shift();
-				val = chunks.join(':')
-				if (row.hasOwnProperty(field))
-					if (table.wrap(row[field]).toString().toLowerCase().includes(val.toLowerCase()))
-						return true
+				chunks = value.split(operator);
+				field = chunks.shift().trim();
+				val = chunks.join(operator).trim()
+				val = val.replace(/\"/g, ''); // I'm doing this down here so we can support [field]:" ". It'll trim before it removes the quotes.
+				field = field.replace(/\"/g, '');
+				if (row.hasOwnProperty(field)) {
+					switch(operator) {
+						case ':':
+							return table.wrap(row[field]).toLowerCase().includes(val.toLowerCase())
+						case '=':
+							return table.wrap(row[field]).toLowerCase() == val.toLowerCase()
+						case '>':
+							if (isNaN(row[field]))
+								return table.wrap(row[field]).toLowerCase() > val.toLowerCase()
+							return parseFloat(row[field]) > parseFloat(val);
+						case '<':
+							if (isNaN(row[field]))
+								return table.wrap(row[field]).toLowerCase() < val.toLowerCase()
+							return parseFloat(row[field]) < parseFloat(val);
+						
+					}
+				}
 			}
 			return false
 		}
@@ -89,7 +114,7 @@
 				console.log("Okay, it looks like you're looking for: ", s);
 				$('#status').html('<p class="good">' + (s == null ? "[No query]" : s) + '</p>');
 				console.log("Generating filter function");
-				f = l.filterFunction(fancyFilter)
+				f = l.filterFunction(generalLeafResolver)
 				console.log("Filtering");
 				data = sample_data.filter(f)
 				table.updateData(data);
@@ -114,6 +139,10 @@
 	</script>
 </head>
 <body>
+	<a class="github" href="https://github.com/altef/logipar">
+		<svg version="1.1" width="16" height="16" viewBox="0 0 16 16" class="octicon octicon-mark-github" aria-hidden="true"><path fill-rule="evenodd" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0 0 16 8c0-4.42-3.58-8-8-8z"></path></svg>
+		<span class="d-none d-sm-inline">altef/Logipar</span>
+	</a>
 	<div class="section">
 		<h2>Example questions:</h2>
 		<p><small>(Click them and the matching logic string will appear in the filter box.)</small></p>
@@ -124,6 +153,10 @@
 			<p data-logic='Vocality:5 OR Vocality:1'>Which are the most and least vocal cats?</p>
 			<p data-logic="Breed:American XOR Breed:Shorthair">All American- breeds and all -Shorthair breeds EXCEPT the American Shorthair.  Is that even a real cat??</p>
 			<p data-logic="(Breed:u OR Breed:y OR Breed:z) and not (Breed:e OR Breed:a)">Which breeds contain the letters U, Y or Z, but not E or A?</p>
+			<p data-logic="Friendliness>3">Which cats have a friendliness value of more than 3?</p>
+			<p data-logic='"Shedding < 2"'>Which cats have a shedding value of less than 2?</p>
+			<p data-logic="Vocality=3">Which cats have a vocality of exactly 3?</p>
+			<p data-logic="Breed>r">Which cats start with R-Z?</p>
 		</div>
 	</div>
 	<div class="section">
