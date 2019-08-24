@@ -84,7 +84,7 @@ Or you can include [Logipar.js](https://github.com/altef/logipar/blob/master/js/
 ##### Python
 ```python
     import logipar
-    lp = logipar.logipar_Logipar()
+    lp = logipar.Logipar()
     lp.parse("a AND b")
     print(lp.stringify())
 ```
