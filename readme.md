@@ -100,7 +100,7 @@ When you're using the PHAR, it should take care of loading the classes for you.
 ```
 
 ## Quotations marks
-While **Logipar** can automatically merge neigbouring literals, sometimes that's not enough.  It also supports quotation marks around literals.  This means you can have values that would otherwise be parsed as tokens _in_ the literals - if they're wrapped in quotation marks.  The quotation marks become part of the value, for you to deal with however you want.
+While **Logipar** can automatically merge neigbouring literals, sometimes that's not enough.  It also supports quotation marks around literals.  This means you can have values that would otherwise be parsed as tokens _in_ the literals - if they're wrapped in quotation marks.  The quotation marks become part of the value, for you to deal with however you want.  This is also handy for supplying whitespace as a value.
 Take the logic string `a="CAT OR DOG" OR This is a sentance.`.
 `a="CAT OR DOG"` is a literal.  Even though it has and an OR in it.  You can then use it however is appropriate - split it on the equals sign maybe, and strip the quotation marks to check for the string "CAT OR DOG" in the "a" column.  I don't know, that's your journey!
 
