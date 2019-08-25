@@ -26,7 +26,9 @@ If that doesn't help, check out our [Cat breed](https://altef.github.io/logipar)
 You can rename the operatores however you want!  You can also use it with basically whatever *literals/values* you want¹.  (1. There are *some* restrictions.)
 
 A simple example: `one AND (two OR three)`  
-A more complex example: `title=Cat XOR "title contains dog"`.  **Logipar** doesn't care about the literals you use, so you can add whatever complexity you is appropriate for your project there - I'm not judging!  In fact, _I endorse it_.
+A more complex example: `title=Cat XOR title contains dog`.  **Logipar** doesn't care about the literals you use, so you can add whatever complexity you is appropriate for your project there - I'm not judging!  In fact, _I endorse it_.
+
+Logipar will automatically merge adjacent literals, _unless you don't want it to_. So `title contains dog` can count as a single literal, even without quotation marks.  Or it can count as three `title`, `contains`, and `dog` - the choice is yours! (By default it merges.)
 
 # What can I do with it once it's parsed?
 
@@ -98,25 +100,30 @@ When you're using the PHAR, it should take care of loading the classes for you.
 ```
 
 ## Quotations marks
-**Logipar** supports quotation marks around literals.  This means you can have spaces in them - if they're wrapped in quotation marks.  The quotation marks become part of the value, for you to deal with however you want.
-Take the logic string `a="CAT OR DOG" OR "This is a sentance."`.
-`a="CAT OR DOG"` is a literal.  Even though it has spaces and an or in it.  You can then use it however is appropriate - split it on the equals sign maybe, and strip the quotation marks to check for the string "CAT OR DOG" in the "a" column.
-`"This is a sentance."` is also a literal.
-So it'll parse out to: `a="CAT OR DOG"` *OR* `"This is a sentance."`.
+While **Logipar** can automatically merge neigbouring literals, sometimes that's not enough.  It also supports quotation marks around literals.  This means you can have values that would otherwise be parsed as tokens _in_ the literals - if they're wrapped in quotation marks.  The quotation marks become part of the value, for you to deal with however you want.
+Take the logic string `a="CAT OR DOG" OR This is a sentance.`.
+`a="CAT OR DOG"` is a literal.  Even though it has and an OR in it.  You can then use it however is appropriate - split it on the equals sign maybe, and strip the quotation marks to check for the string "CAT OR DOG" in the "a" column.  I don't know, that's your journey!
 
-The default quotation mark characters are `"'`.  But you can add to or change these through **Logipar**'s aptly-named `quotations` property - which is an array of strings denoting whatever you want to use as valid quotation mark characters.
+`This is a sentance.` is also a literal since it'll be automatically merged by default.  **Logipar**'s `mergeAdjacentLiterals` (which defaults to `true`) controls this. So set it to false if you don't want to merge them.
+
+So it'll parse out to: `a="CAT OR DOG"` *OR* `This is a sentance.`.
+
+The default quotation mark characters are `"` and `'`.  But you can add to or change these through **Logipar**'s aptly-named `quotations` property - which is an array of strings denoting whatever you want to use as valid quotation mark characters.
 
 ##### Javascript
 ```javascript
 lp.quotations.push("`"); // Add backtick 
+lp.mergeAdjacentLiterals = true; // This is its default value
 ```
 ##### Python
 ```python
 lp.quotations.append("`"); // Add backtick 
+lp.mergeAdjacentLiterals = true; // This is its default value
 ```
 ##### Php
 ```php
 $lp->quotations[] = "`"; // Add backtick
+$lp->mergeAdjacentLiterals = true; // This is its default value
 ```
 
 ## Case sensitivity

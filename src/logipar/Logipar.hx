@@ -106,6 +106,8 @@ class Logipar {
 		}
 		return merged;
 	}
+
+	
 	// This is a private function - what're you doing here?!
 	// JK. This converts a list of tokens into a tree.  It assumes it's already been through the shunter so it ignores order of operations.
 	private function treeify(tokens:Array<Token>):Node {

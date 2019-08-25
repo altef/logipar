@@ -71,7 +71,7 @@ const logipar = require("logipar")
 
 
 let data = [{'value': 0}, {'value': 1}, {'value': 2}, {'value': 3}] 
-var logic = '"value < 1" OR "value > 2" OR value=1'
+var logic = '"value < 1" OR value > 2 OR value=1'
 var lp = new logipar.Logipar()
 lp.parse(logic)
 
@@ -126,7 +126,7 @@ const logipar = require("logipar")
 
 
 let data = [0,1,2,3,4,5,6] 
-var logic = '"x < 1" OR "x > 5" OR x=1'
+var logic = 'x < 1 OR "x > 5" OR x=1'
 var lp = new logipar.Logipar()
 lp.parse(logic)
 
