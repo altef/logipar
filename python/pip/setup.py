@@ -5,7 +5,7 @@ with open("../../readme.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
 	name="logipar",
-	version="0.2.4",
+	version="0.3.0",
 	author="Brad Gill",
 	author_email="brad@alteredeffect.com",
 	description="A logic string parser",

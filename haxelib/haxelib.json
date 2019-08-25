@@ -13,9 +13,9 @@
 		"php"
 	],
 	"description": "A logic string parser for multiple platforms",
-	"version": "0.2.4",
+	"version": "0.3.0",
 	"classPath": "src/",
-	"releasenote": "Catching up to NPM and PYPI version numbers.",
+	"releasenote": "Adjacent literals are now merged by default.",
 	"contributors": ["altef"],
 	"dependencies": {}
 }
