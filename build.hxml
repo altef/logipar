@@ -23,3 +23,8 @@ libraries.hxml
 --main Test 
 --php tests/php
 -lib buddy
+
+--next
+--main Test 
+--interp
+-lib buddy

@@ -117,6 +117,19 @@ class Test extends buddy.SingleSuite {
 			}
 		});
 		
+		describe("Do literals merge as expected?", {
+			var l = new logipar.Logipar();
+			l.caseSensitive = false;
+			var tests = [
+				['this is a cat OR this is a dog OR rat', "({this is a cat} OR ({this is a dog} OR {rat}))"],
+			];
+			for(t in tests) {
+				it("Testing: " + t[0], {
+					l.parse(t[0]);
+					l.stringify().should.be(t[1]);
+				});
+			}
+		});
 		
 		// I should test the filterFunction stuff, but I'm too lazy atm...
 	}

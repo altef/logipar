@@ -13,6 +13,7 @@ class Logipar {
 
 	public var quotations = ['"', "'"];  // You can add to the list of quotation symbols for the whitepsace toggling
 	public var caseSensitive:Bool = true;  // In case you don't want the operators to be case sensitive
+	public var mergeAdjacentLiterals:Bool = true; // If you don't want it to, change this to false
 	private var syntax:Map<String, String> = [  // Default syntax.
 		Token.AND => 'AND',
 		Token.OR => 'OR',
@@ -47,6 +48,8 @@ class Logipar {
 	public function parse(logic_string:String):Node { 
 		var tokens = tokenize(logic_string);  // Lex that guy!
 		var types = typeize(tokens);  // Figure out the what types each chunk represents
+		if (mergeAdjacentLiterals)
+			types = mergeLiterals(types);
 		var reversepolish = shunt(types);  // Ugh order of operations, am I right?
 		tree = treeify(reversepolish);  // Arboriculture
 		return tree;
@@ -87,8 +90,22 @@ class Logipar {
 	public function toString():String {
 		return stringify();
 	}
+	
 
-
+	// Merge any neighbouring literals into one single literal.
+	private function mergeLiterals(tokens:Array<Token>):Array<Token> {
+		var merged:Array<Token> = [];
+		for(i in 0...tokens.length) {
+			if (tokens[i].type == Token.LITERAL) {
+				if (i > 0 && merged[merged.length-1].type == Token.LITERAL) {
+					merged[merged.length-1].literal += " " + tokens[i].literal;
+					continue;
+				}
+			}
+			merged.push(tokens[i]);
+		}
+		return merged;
+	}
 	// This is a private function - what're you doing here?!
 	// JK. This converts a list of tokens into a tree.  It assumes it's already been through the shunter so it ignores order of operations.
 	private function treeify(tokens:Array<Token>):Node {
