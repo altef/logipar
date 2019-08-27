@@ -4,6 +4,7 @@
   <img src="https://altef.github.io/logipar/logo.png" alt="Logipar">
 </p>
 
+# Logipar
 /lɑːdʒɪpɜːr/
 
 *noun*: Your go-to polyglot **logic string parser**.

@@ -1,5 +1,8 @@
 [![npm](https://img.shields.io/npm/v/logipar)](https://npmjs.com/package/logipar) [![pypi](https://img.shields.io/pypi/v/logipar)](https://pypi.org/project/logipar/) [![haxelib install logipar](https://img.shields.io/badge/haxelib-logipar-orange, "haxelib install logipar")](https://lib.haxe.org/p/logipar/) [![php phar](https://img.shields.io/badge/php-Logipar.phar-orange, "PHP Logipar.phar")](https://github.com/altef/logipar/blob/master/php/Logipar.phar)
 
+<p align="center">
+  <img src="https://altef.github.io/logipar/logo.png" alt="Logipar">
+</p>
 
 # Logipar
 /lɑːdʒɪpɜːr/
