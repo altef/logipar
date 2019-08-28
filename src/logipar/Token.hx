@@ -1,11 +1,11 @@
-#if !((js || python) && !addpackage)
-// Packages make it too wordy in these targets
 package logipar;
-#end
 
 
 // This is a token.  That is all.  It represents a portion of the logic string.
-@:expose
+#if !php
+@:native('Token')
+@:expose('Token')
+#end
 @:keep
 class Token {
 	public static inline var AND = "AND";

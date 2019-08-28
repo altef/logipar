@@ -1,10 +1,10 @@
-#if !((js || python) && !addpackage)
-// Packages make it too wordy in these targets
 package logipar;
-#end
 
 // This is used to represent every node in the tree
-@:expose
+#if !php
+@:native('Node')
+@:expose('Node')
+#end
 @:keep
 class Node {
 

@@ -1,17 +1,14 @@
---class-path src/logipar
 --class-path src
-
-
 -dce full
+
 --each
 
-
-Logipar 
+logipar.Logipar 
 --js js/logipar/Logipar.js
 
 --next 
 
-Logipar 
+logipar.Logipar 
 --js docs/Logipar.js
 
 --next 
@@ -21,10 +18,10 @@ logipar.Logipar
 
 --next 
 
-Logipar 
+logipar.Logipar 
 --python python/logipar.py
 
 --next 
 
-Logipar 
+logipar.Logipar 
 --python python/pip/logipar/logipar.py

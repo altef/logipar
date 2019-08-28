@@ -1,12 +1,12 @@
-#if !((js || python) && !addpackage)
-// Packages make it too wordy in these targets
 package logipar;
-#end
 
 using StringTools;
 import haxe.ds.GenericStack;
 
-@:expose
+#if !php
+@:native('Logipar')
+@:expose('Logipar')
+#end
 @:keep
 class Logipar {
 
