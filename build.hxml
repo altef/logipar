@@ -24,6 +24,16 @@ libraries.hxml
 --php tests/php
 -lib buddy
 
+--next 
+
+--main Test 
+--js tests/Test.js
+-D addpackage
+-lib buddy
+-lib hxnodejs
+
+
+
 --next
 --main Test 
 --interp
