@@ -35,7 +35,9 @@ class Token {
 	 */
 	public function precedence():Int {
 		switch(type) {
-			case Token.AND | Token.NOT:
+			case Token.NOT:
+				return 3;
+			case Token.AND:
 				return 2;
 			case Token.OR | Token.XOR:
 				return 1;
