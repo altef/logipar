@@ -13,9 +13,9 @@
 		"php"
 	],
 	"description": "A logic string parser for multiple platforms",
-	"version": "0.3.0",
+	"version": "0.3.1",
 	"classPath": "src/",
-	"releasenote": "Adjacent literals are now merged by default.",
+	"releasenote": "NOT should have greater precedence than AND.",
 	"contributors": ["altef"],
 	"dependencies": {}
 }

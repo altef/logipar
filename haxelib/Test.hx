@@ -65,7 +65,7 @@ class Test extends buddy.SingleSuite {
 			var l = new logipar.Logipar();
 			var tests = [
 				["NOT a OR b", "(NOT({a}) OR {b})"],
-				["NOT a AND b", "NOT(({a} AND {b}))"],
+				["NOT a AND b", "(NOT({a}) AND {b})"],
 				["a AND b XOR c AND d", "(({a} AND {b}) XOR ({c} AND {d}))"],
 			];
 			for(t in tests) {
@@ -81,7 +81,7 @@ class Test extends buddy.SingleSuite {
 			var l = new logipar.Logipar();
 			var tests = [
 				["NOT a OR b", "(NOT(a) OR b)"],
-				["NOT a AND b", "NOT((a AND b))"],
+				["NOT a AND b", "(NOT(a) AND b)"],
 				["a XOR b", "((a AND NOT b) OR (NOT a AND b))"],
 			];
 			for(t in tests) {
