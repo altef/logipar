@@ -10,7 +10,6 @@ import haxe.ds.GenericStack;
 @:keep
 class Logipar {
 
-
 	public var quotations = ['"', "'"];  // You can add to the list of quotation symbols for the whitepsace toggling
 	public var caseSensitive:Bool = true;  // In case you don't want the operators to be case sensitive
 	public var mergeAdjacentLiterals:Bool = true; // If you don't want it to, change this to false
@@ -23,7 +22,7 @@ class Logipar {
 		Token.CLOSE => ')',
 	];
 
-	private var tree:Node;  // This is the internal representation of the tree.  It's null.
+	public var tree(default, null):Node;  // This is the internal representation of the tree.  It's null.
 
 
 	/**
@@ -70,6 +69,11 @@ class Logipar {
 	}
 
 
+	public function walk(f:(Node)->Void):Void {
+		tree.walk(f);
+	}
+	
+
 	/**
 	 * Sometimes you just want to filter a list of rows, right?
 	 * This function creates a filter function for you, based on your needs.
@@ -87,8 +91,19 @@ class Logipar {
 	}
 
 
+	/**
+	 * Returns a string representation of the tree.
+	 */
 	public function toString():String {
 		return stringify();
+	}
+
+
+	/**
+	 * Are two trees equal?
+	 */
+	public function equals(b:Logipar):Bool {
+		return tree.equals(b.tree);
 	}
 	
 
@@ -135,8 +150,9 @@ class Logipar {
 			stack.add(n);  // Add the node, now that it's all linked up
 		}
 		var parsetree = stack.pop();  // The first node should be the root of the tree
-		if (!stack.isEmpty())  // But if it isn't, that means something's gone wrong.  Probably neighbouring LITERALs
-			throw "Uhoh, the stack isn't empty.  Do you have neighbouring literals?";
+		if (!stack.isEmpty()) {  // But if it isn't, that means something's gone wrong.
+			throw "Invalid logic string.  Do you have parentheses in your literals?";
+		}
 		
 		return parsetree;
 	}

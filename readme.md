@@ -74,7 +74,7 @@ You can follow along with these javascript samples on  on [Runkit](https://npm.r
 const logipar = require("logipar")
 const lp = new logipar.Logipar();
 lp.parse("a AND b");
-console.log(lp.stringify())
+console.log(lp.toString())
 ````
 Or you can include [Logipar.js](https://github.com/altef/logipar/blob/master/js/Logipar.js) in your code.  Note that in this method the classes are accessed via `Logipar`, `Token`, and `Node` - rather than through a `logipar` constant, as above.
 ```html
@@ -91,7 +91,7 @@ Or you can include [Logipar.js](https://github.com/altef/logipar/blob/master/js/
     import logipar
     lp = logipar.Logipar()
     lp.parse("a AND b")
-    print(lp.stringify())
+    print(lp.toString())
 ```
 ##### Php
 When you're using the PHAR, it should take care of loading the classes for you.
@@ -99,7 +99,7 @@ When you're using the PHAR, it should take care of loading the classes for you.
     require_once("Logipar.phar");   
     $lp = new \logipar\Logipar();
     $lp->parse("a AND b");
-    print($lp->stringify());
+    print($lp->toString());
 ```
 
 ## Quotations marks
@@ -229,6 +229,13 @@ $flattened = $lp->stringify(function($n) {
 });
 
 ```
+
+The string returned will make use if minimal parentheses.  If for some reason you want everything wrapped in brackets, that's easy too:
+
+```haxe
+lp.walk(function(n:logipar.Node):Void { n.bracketing = logipar.Node.MAXIMAL_BRACKETS; });
+```
+That'll set the bracketing mode for each node in the tree to `MAXIMAL_BRACKETS`.  If you only want to change certain node types, you can check the value in `n.token.type` and act accordingly.
 
 ## Filtering data
 Sometimes you just want to filter an array of rows. Nothing more, nothing less.  Well, maybe more.  Maybe you want to do it based on _a logic string_. 

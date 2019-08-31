@@ -35,6 +35,8 @@ class Token {
 	 */
 	public function precedence():Int {
 		switch(type) {
+			case Token.LITERAL:
+				return 4;
 			case Token.NOT:
 				return 3;
 			case Token.AND:
@@ -44,6 +46,14 @@ class Token {
 			default:
 				return 0;
 		}
+	}
+
+
+	/**
+	 * Compare it to another token.
+	 */
+	public function equals(b:Token):Bool {
+		return type == b.type && literal == b.literal;
 	}
 
 

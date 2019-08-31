@@ -9,10 +9,31 @@ package logipar;
 class Node {
 
 	public var token:Token;  // The token for this node
-	public var left:Node;  // Its left-child (presumably preceding operand)
-	public var right:Node;  // Its right-child (presumably succeeding operand)
+	public var left(default, set):Node;  // Its left-child (presumably preceding operand)
+	public var right(default, set):Node;  // Its right-child (presumably succeeding operand)
+	public var parent(default, null):Node; // For heading back up the tree
+
+	public static var MINIMAL_BRACKETS="MINIMAL_BRACKETS";
+	public static var MAXIMAL_BRACKETS="MAXIMAL_BRACKETS";
+	public var bracketing:String = MINIMAL_BRACKETS; // Bracket mode used to display this node
 
 	public var f:Node->String; // This is so custom fancyString functions can call themselves recursively
+
+
+
+	// Automatically set the parent for the child
+	function set_left(n:Node) {
+		n.parent = this;
+		return left = n;
+	}
+
+
+	// Automatically set the parent for the child
+	function set_right(n:Node) {
+		n.parent = this;
+		return right = n;
+	}
+
 
 	/**
 	 * Construct a new node.  That is all.
@@ -38,6 +59,40 @@ class Node {
 	}
 
 
+	/**
+	 * Compare two nodes, recursively.
+	 */
+	public function equals(b:Node):Bool {
+		if (token.equals(b.token)) {
+			if ( b == null) return false;
+			
+			return ((left == null && b.left == null) || (left != null && left.equals(b.left))) // Check that the left children are the same
+				&& ((right == null && b.right == null) || (right != null && right.equals(b.right))); // Check that the right children are the same
+		}
+		return false;
+	}
+
+
+	public function walk(f:(Node)->Void):Void {
+		f(this);
+		if (left != null)
+			f(left);
+		if (right != null)
+			f(right);
+	}
+
+
+	/** 
+	 * Minimally bracket things, when flattening to a string.
+	 */
+	public function bracket(str:String):String {
+		// Wrap it in brackets if the parent is of higher precedence
+		if (bracketing == "MAXIMAL_BRACKETS" || (parent != null && (parent.token.precedence() > token.precedence())))
+			return "(" + str + ")";
+		return str;
+	}
+
+
 	private function _fancyString(n:Node, f:(Node)->String = null):String {
 		var s = null;
 		if (f != null) {
@@ -51,9 +106,9 @@ class Node {
 			case Token.LITERAL:
 				return "{" + n.token.literal + "}";
 			case Token.NOT:
-				return "NOT(" + n.right.fancyString(f) + ")";
+				return bracket("NOT " + n.right.fancyString(f));
 			default:
-				return "(" + n.left.fancyString(f) + " " + Std.string(n.token.type) + " " + n.right.fancyString(f) + ")";
+				return bracket(n.left.fancyString(f) + " " + Std.string(n.token.type) + " " + n.right.fancyString(f));
 		}
 	}
 

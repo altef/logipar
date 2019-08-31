@@ -167,3 +167,23 @@ var customFilter = lp.filterFunction(relationalOperatorsOnArray)
 // Filter the array
 data.filter(customFilter) 
 ```
+
+
+### Resolving binary logic
+You can use the filter function for this too!
+```haxe
+const logipar = require("logipar")
+
+const logic = '1 OR 0 AND NOT 1'
+const lp = new logipar.Logipar()
+lp.parse(logic)
+
+const binarylogicResolver = function(row, value) {
+    return value.trim() == "1";
+}
+
+let answer = lp.filterFunction(binarylogicResolver)()
+```
+
+Since our resolver here ignores any row data - it's only concerned with the value of the literals - I don't need to pass it anything.  On the other hand, I could just as easily pass it anything.
+So I just call the function as soon as **Logipar** passes it back.
