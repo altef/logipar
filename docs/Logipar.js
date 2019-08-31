@@ -332,6 +332,9 @@ Logipar.prototype = {
 			return this.tree.fancyString(f);
 		}
 	}
+	,walk: function(f) {
+		this.tree.walk(f);
+	}
 	,filterFunction: function(f) {
 		var enclosed = this.tree;
 		return function(a) {
@@ -343,6 +346,9 @@ Logipar.prototype = {
 	}
 	,toString: function() {
 		return this.stringify();
+	}
+	,equals: function(b) {
+		return this.tree.equals(b.tree);
 	}
 	,mergeLiterals: function(tokens) {
 		var merged = [];
@@ -382,7 +388,7 @@ Logipar.prototype = {
 					stack.head = k.next;
 					tmp = k.elt;
 				}
-				n.right = tmp;
+				n.set_right(tmp);
 				if(token.type != "NOT") {
 					if(stack.head == null) {
 						var key1 = token.type;
@@ -397,7 +403,7 @@ Logipar.prototype = {
 						stack.head = k1.next;
 						tmp1 = k1.elt;
 					}
-					n.left = tmp1;
+					n.set_left(tmp1);
 				}
 			}
 			stack.head = new haxe_ds_GenericCell(n,stack.head);
@@ -412,7 +418,7 @@ Logipar.prototype = {
 		}
 		var parsetree1 = parsetree;
 		if(stack.head != null) {
-			throw new js__$Boot_HaxeError("Uhoh, the stack isn't empty.  Do you have neighbouring literals?");
+			throw new js__$Boot_HaxeError("Invalid logic string.  Do you have parentheses in your literals?");
 		}
 		return parsetree1;
 	}
@@ -567,15 +573,60 @@ Logipar.prototype = {
 	}
 };
 var Node = $hx_exports["Node"] = function(token) {
+	this.bracketing = Node.MINIMAL_BRACKETS;
 	this.token = token;
 };
 Node.__name__ = true;
 Node.prototype = {
-	toString: function() {
+	set_left: function(n) {
+		n.parent = this;
+		return this.left = n;
+	}
+	,set_right: function(n) {
+		n.parent = this;
+		return this.right = n;
+	}
+	,toString: function() {
 		return this.fancyString();
 	}
 	,fancyString: function(f) {
 		return this._fancyString(this,f);
+	}
+	,equals: function(b) {
+		if(this.token.equals(b.token)) {
+			if(b == null) {
+				return false;
+			}
+			if(this.left == null && b.left == null || this.left != null && this.left.equals(b.left)) {
+				if(!(this.right == null && b.right == null)) {
+					if(this.right != null) {
+						return this.right.equals(b.right);
+					} else {
+						return false;
+					}
+				} else {
+					return true;
+				}
+			} else {
+				return false;
+			}
+		}
+		return false;
+	}
+	,walk: function(f) {
+		f(this);
+		if(this.left != null) {
+			f(this.left);
+		}
+		if(this.right != null) {
+			f(this.right);
+		}
+	}
+	,bracket: function(str) {
+		if(this.bracketing == "MAXIMAL_BRACKETS" || this.parent != null && this.parent.token.precedence() > this.token.precedence()) {
+			return "(" + str + ")";
+		}
+		return str;
 	}
 	,_fancyString: function(n,f) {
 		var s = null;
@@ -595,9 +646,9 @@ Node.prototype = {
 		case "LITERAL":
 			return "{" + n.token.literal + "}";
 		case "NOT":
-			return "NOT(" + n.right.fancyString(f) + ")";
+			return this.bracket("NOT " + n.right.fancyString(f));
 		default:
-			return "(" + n.left.fancyString(f) + " " + Std.string(n.token.type) + " " + n.right.fancyString(f) + ")";
+			return this.bracket(n.left.fancyString(f) + " " + Std.string(n.token.type) + " " + n.right.fancyString(f));
 		}
 	}
 	,check: function(a,f) {
@@ -648,12 +699,21 @@ Token.prototype = {
 		switch(this.type) {
 		case "AND":
 			return 2;
+		case "LITERAL":
+			return 4;
 		case "NOT":
 			return 3;
 		case "OR":case "XOR":
 			return 1;
 		default:
 			return 0;
+		}
+	}
+	,equals: function(b) {
+		if(this.type == b.type) {
+			return this.literal == b.literal;
+		} else {
+			return false;
 		}
 	}
 	,toString: function() {
@@ -672,6 +732,8 @@ Object.defineProperty(js__$Boot_HaxeError.prototype,"message",{ get : function()
 	return String(this.val);
 }});
 js_Boot.__toStr = ({ }).toString;
+Node.MINIMAL_BRACKETS = "MINIMAL_BRACKETS";
+Node.MAXIMAL_BRACKETS = "MAXIMAL_BRACKETS";
 Token.AND = "AND";
 Token.OR = "OR";
 Token.XOR = "XOR";

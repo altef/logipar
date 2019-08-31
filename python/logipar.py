@@ -142,7 +142,7 @@ class Logipar:
     _hx_class_name = "Logipar"
     __slots__ = ("quotations", "caseSensitive", "mergeAdjacentLiterals", "syntax", "tree")
     _hx_fields = ["quotations", "caseSensitive", "mergeAdjacentLiterals", "syntax", "tree"]
-    _hx_methods = ["overwrite", "parse", "stringify", "filterFunction", "toString", "mergeLiterals", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
+    _hx_methods = ["overwrite", "parse", "stringify", "walk", "filterFunction", "toString", "equals", "mergeLiterals", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
 
     def __init__(self):
         self.tree = None
@@ -177,6 +177,9 @@ class Logipar:
         else:
             return self.tree.fancyString(f)
 
+    def walk(self,f):
+        self.tree.walk(f)
+
     def filterFunction(self,f):
         enclosed = self.tree
         def _hx_local_0(a):
@@ -187,6 +190,9 @@ class Logipar:
 
     def toString(self):
         return self.stringify()
+
+    def equals(self,b):
+        return self.tree.equals(b.tree)
 
     def mergeLiterals(self,tokens):
         merged = []
@@ -224,7 +230,7 @@ class Logipar:
                 else:
                     stack.head = k.next
                     tmp = k.elt
-                n.right = tmp
+                n.set_right(tmp)
                 if (token.type != "NOT"):
                     if (stack.head is None):
                         raise _HxException((("An '" + HxOverrides.stringOrNull(self.syntax.h.get(token.type,None))) + "' is missing a value to operate on (on its left)."))
@@ -235,7 +241,7 @@ class Logipar:
                     else:
                         stack.head = k1.next
                         tmp1 = k1.elt
-                    n.left = tmp1
+                    n.set_left(tmp1)
             stack.head = haxe_ds_GenericCell(n,stack.head)
         k2 = stack.head
         parsetree = None
@@ -246,7 +252,7 @@ class Logipar:
             parsetree = k2.elt
         parsetree1 = parsetree
         if (stack.head is not None):
-            raise _HxException("Uhoh, the stack isn't empty.  Do you have neighbouring literals?")
+            raise _HxException("Invalid logic string.  Do you have parentheses in your literals?")
         return parsetree1
 
     def shunt(self,tokens):
@@ -428,21 +434,70 @@ class Logipar:
 
 class Node:
     _hx_class_name = "Node"
-    __slots__ = ("token", "left", "right", "f")
-    _hx_fields = ["token", "left", "right", "f"]
-    _hx_methods = ["toString", "fancyString", "_fancyString", "check"]
+    __slots__ = ("token", "left", "right", "parent", "bracketing", "f")
+    _hx_fields = ["token", "left", "right", "parent", "bracketing", "f"]
+    _hx_methods = ["set_left", "set_right", "toString", "fancyString", "equals", "walk", "bracket", "_fancyString", "check"]
+    _hx_statics = ["MINIMAL_BRACKETS", "MAXIMAL_BRACKETS"]
 
     def __init__(self,token):
         self.f = None
+        self.parent = None
         self.right = None
         self.left = None
+        self.bracketing = Node.MINIMAL_BRACKETS
         self.token = token
+
+    def set_left(self,n):
+        n.parent = self
+        def _hx_local_1():
+            def _hx_local_0():
+                self.left = n
+                return self.left
+            return _hx_local_0()
+        return _hx_local_1()
+
+    def set_right(self,n):
+        n.parent = self
+        def _hx_local_1():
+            def _hx_local_0():
+                self.right = n
+                return self.right
+            return _hx_local_0()
+        return _hx_local_1()
 
     def toString(self):
         return self.fancyString()
 
     def fancyString(self,f = None):
         return self._fancyString(self,f)
+
+    def equals(self,b):
+        if self.token.equals(b.token):
+            if (b is None):
+                return False
+            if (((self.left is None) and ((b.left is None))) or (((self.left is not None) and self.left.equals(b.left)))):
+                if (not (((self.right is None) and ((b.right is None))))):
+                    if (self.right is not None):
+                        return self.right.equals(b.right)
+                    else:
+                        return False
+                else:
+                    return True
+            else:
+                return False
+        return False
+
+    def walk(self,f):
+        f(self)
+        if (self.left is not None):
+            f(self.left)
+        if (self.right is not None):
+            f(self.right)
+
+    def bracket(self,_hx_str):
+        if ((self.bracketing == "MAXIMAL_BRACKETS") or (((self.parent is not None) and ((self.parent.token.precedence() > self.token.precedence()))))):
+            return (("(" + ("null" if _hx_str is None else _hx_str)) + ")")
+        return _hx_str
 
     def _fancyString(self,n,f = None):
         s = None
@@ -462,14 +517,14 @@ class Node:
             if (_g == "LITERAL"):
                 return (("{" + HxOverrides.stringOrNull(n.token.literal)) + "}")
             else:
-                return (((((("(" + HxOverrides.stringOrNull(n.left.fancyString(f))) + " ") + Std.string(n.token.type)) + " ") + HxOverrides.stringOrNull(n.right.fancyString(f))) + ")")
+                return self.bracket(((((HxOverrides.stringOrNull(n.left.fancyString(f)) + " ") + Std.string(n.token.type)) + " ") + HxOverrides.stringOrNull(n.right.fancyString(f))))
         elif (_hx_local_1 == 3):
             if (_g == "NOT"):
-                return (("NOT(" + HxOverrides.stringOrNull(n.right.fancyString(f))) + ")")
+                return self.bracket(("NOT " + HxOverrides.stringOrNull(n.right.fancyString(f))))
             else:
-                return (((((("(" + HxOverrides.stringOrNull(n.left.fancyString(f))) + " ") + Std.string(n.token.type)) + " ") + HxOverrides.stringOrNull(n.right.fancyString(f))) + ")")
+                return self.bracket(((((HxOverrides.stringOrNull(n.left.fancyString(f)) + " ") + Std.string(n.token.type)) + " ") + HxOverrides.stringOrNull(n.right.fancyString(f))))
         else:
-            return (((((("(" + HxOverrides.stringOrNull(n.left.fancyString(f))) + " ") + Std.string(n.token.type)) + " ") + HxOverrides.stringOrNull(n.right.fancyString(f))) + ")")
+            return self.bracket(((((HxOverrides.stringOrNull(n.left.fancyString(f)) + " ") + Std.string(n.token.type)) + " ") + HxOverrides.stringOrNull(n.right.fancyString(f))))
 
     def check(self,a,f):
         _g = self.token.type
@@ -516,7 +571,7 @@ class Token:
     _hx_class_name = "Token"
     __slots__ = ("type", "literal")
     _hx_fields = ["type", "literal"]
-    _hx_methods = ["precedence", "toString"]
+    _hx_methods = ["precedence", "equals", "toString"]
     _hx_statics = ["AND", "OR", "XOR", "NOT", "OPEN", "CLOSE", "LITERAL"]
 
     def __init__(self,_hx_type,literal = None):
@@ -535,6 +590,11 @@ class Token:
                 return 1
             else:
                 return 0
+        elif (_hx_local_0 == 7):
+            if (_g == "LITERAL"):
+                return 4
+            else:
+                return 0
         elif (_hx_local_0 == 2):
             if (_g == "OR"):
                 return 1
@@ -542,6 +602,12 @@ class Token:
                 return 0
         else:
             return 0
+
+    def equals(self,b):
+        if (self.type == b.type):
+            return (self.literal == b.literal)
+        else:
+            return False
 
     def toString(self):
         if (self.type == "LITERAL"):
@@ -919,6 +985,8 @@ Math.POSITIVE_INFINITY = float("inf")
 Math.NaN = float("nan")
 Math.PI = python_lib_Math.pi
 
+Node.MINIMAL_BRACKETS = "MINIMAL_BRACKETS"
+Node.MAXIMAL_BRACKETS = "MAXIMAL_BRACKETS"
 Token.AND = "AND"
 Token.OR = "OR"
 Token.XOR = "XOR"

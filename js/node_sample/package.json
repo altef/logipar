@@ -9,6 +9,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "logipar": "^0.3.1"
+    "logipar": "^0.4.0"
   }
 }
