@@ -111,6 +111,24 @@ class Test extends buddy.SingleSuite {
 				});
 			}
 		});
+
+
+		describe("Walk test", {
+			var l = new logipar.Logipar();
+			l.caseSensitive = false;
+			it('seven nodes', {
+				l.parse("(one or two) and (three or four)");
+				var count:Int = 0;
+				l.walk(function(n:logipar.Node):Void { count += 1; });
+				count.should.be(7);
+			});
+			it('three nodes', {
+				l.parse("(one or two)");
+				var count:Int = 0;
+				l.walk(function(n:logipar.Node):Void { count += 1; });
+				count.should.be(3);
+			});
+		});
 	}
 	
 }

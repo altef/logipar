@@ -1,6 +1,6 @@
 # Haxelib packaging
 
-Remamber to update the version number and release notes.
+Remember to update the version number and release notes.
 
 To package for haxelib: `python package.py`
 
