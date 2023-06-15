@@ -76,9 +76,9 @@ class Node {
 	public function walk(f:(Node)->Void):Void {
 		f(this);
 		if (left != null)
-			f(left);
+			left.walk(f);
 		if (right != null)
-			f(right);
+			right.walk(f);
 	}
 
 
