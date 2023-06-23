@@ -365,7 +365,7 @@ class Logipar:
     _hx_class_name = "Logipar"
     __slots__ = ("quotations", "caseSensitive", "mergeAdjacentLiterals", "syntax", "tree")
     _hx_fields = ["quotations", "caseSensitive", "mergeAdjacentLiterals", "syntax", "tree"]
-    _hx_methods = ["overwrite", "parse", "stringify", "walk", "filterFunction", "toString", "equals", "mergeLiterals", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
+    _hx_methods = ["overwrite", "prepareTokens", "parse", "stringify", "walk", "filterFunction", "toString", "equals", "mergeLiterals", "treeify", "shunt", "tentativelyLower", "tokenize", "tokenType", "typeize"]
 
     def __init__(self):
         self.tree = None
@@ -385,11 +385,15 @@ class Logipar:
         if (op in self.syntax.h):
             self.syntax.h[op] = value
 
-    def parse(self,logic_string):
+    def prepareTokens(self,logic_string):
         tokens = self.tokenize(logic_string)
         types = self.typeize(tokens)
         if self.mergeAdjacentLiterals:
             types = self.mergeLiterals(types)
+        return types
+
+    def parse(self,logic_string):
+        types = self.prepareTokens(logic_string)
         reversepolish = self.shunt(types)
         self.tree = self.treeify(reversepolish)
         return self.tree

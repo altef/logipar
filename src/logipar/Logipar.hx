@@ -41,14 +41,23 @@ class Logipar {
 
 
 	/**
-	 * Parse the logic string!  It returns a logipar.Node (the root of the tree), but you can pretty much ignore this.  
-	 * The tree is stored in the instance anyway.
+	 * Tokenize the logic string. In case we just want to know what's what and not make the whole tree.
+	 * I'm adding this to make syntax highlighting easier; a partially written string won't parse into a tree correctly.
 	 */
-	public function parse(logic_string:String):Node { 
+	public function prepareTokens(logic_string:String):Array<Token> {
 		var tokens = tokenize(logic_string);  // Lex that guy!
 		var types = typeize(tokens);  // Figure out the what types each chunk represents
 		if (mergeAdjacentLiterals)
 			types = mergeLiterals(types);
+		return types;
+	}
+
+	/**
+	 * Parse the logic string!  It returns a logipar.Node (the root of the tree), but you can pretty much ignore this.  
+	 * The tree is stored in the instance anyway.
+	 */
+	public function parse(logic_string:String):Node { 
+		var types = prepareTokens(logic_string);
 		var reversepolish = shunt(types);  // Ugh order of operations, am I right?
 		tree = treeify(reversepolish);  // Arboriculture
 		return tree;

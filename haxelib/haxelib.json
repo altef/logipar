@@ -13,9 +13,9 @@
 		"php"
 	],
 	"description": "A logic string parser for multiple platforms",
-	"version": "0.5.0",
+	"version": "0.6.0",
 	"classPath": "src/",
-	"releasenote": "Fixed a bug in the walk function that prevented it from actually descending the tree.",
+	"releasenote": "Added a function to get a token list back.",
 	"contributors": ["altef"],
 	"dependencies": {}
 }

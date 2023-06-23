@@ -224,12 +224,16 @@ Logipar.prototype = {
 			this.syntax.h[op] = value;
 		}
 	}
-	,parse: function(logic_string) {
+	,prepareTokens: function(logic_string) {
 		var tokens = this.tokenize(logic_string);
 		var types = this.typeize(tokens);
 		if(this.mergeAdjacentLiterals) {
 			types = this.mergeLiterals(types);
 		}
+		return types;
+	}
+	,parse: function(logic_string) {
+		var types = this.prepareTokens(logic_string);
 		var reversepolish = this.shunt(types);
 		this.tree = this.treeify(reversepolish);
 		return this.tree;
